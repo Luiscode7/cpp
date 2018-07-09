@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-07-2018 a las 16:33:16
+-- Tiempo de generación: 09-07-2018 a las 18:17:54
 -- Versión del servidor: 10.1.25-MariaDB
 -- Versión de PHP: 5.6.31
 
@@ -30,18 +30,18 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cpp_usuarios` (
   `id` int(11) NOT NULL,
-  `id_usuario` int(11) NOT NULL
+  `id_usuario` int(11) NOT NULL,
+  `id_perfil` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `cpp_usuarios`
 --
 
-INSERT INTO `cpp_usuarios` (`id`, `id_usuario`) VALUES
-(1, 432),
-(2, 61),
-(3, 0),
-(4, 824);
+INSERT INTO `cpp_usuarios` (`id`, `id_usuario`, `id_perfil`) VALUES
+(1, 432, 0),
+(2, 61, 1),
+(4, 824, 0);
 
 --
 -- Índices para tablas volcadas

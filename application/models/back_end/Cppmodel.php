@@ -28,6 +28,8 @@ class CPPmodel extends CI_Model {
 				cpe.id as id_proyecto_empresa,
 				ca.actividad as actividad,
 				cpe.proyecto_empresa as proyecto_empresa,
+				ca.id_proyecto_tipo as id_proyecto_tipo,
+				cpt.tipo as proyecto_tipo,
 				c.id_usuario as id_usuario,
 				c.id_supervisor as id_supervisor,
 				c.id_digitador as id_digitador,
@@ -52,7 +54,10 @@ class CPPmodel extends CI_Model {
 				");
 			$this->db->from('cpp as c');
 		    $this->db->join('cpp_actividades as ca', 'ca.id = c.id_actividad', 'left');
-			$this->db->join('cpp_proyecto_empresa as cpe', 'cpe.id = ca.id_proyecto_empresa', 'left');
+
+		    $this->db->join('cpp_proyecto_tipo as cpt', 'cpt.id = ca.id_proyecto_tipo', 'left');
+
+			$this->db->join('cpp_proyecto_empresa as cpe', 'cpe.id = cpt.id_proyecto_empresa', 'left');
 			
 			$this->db->join('cpp_usuarios as u1', 'c.id_usuario = u1.id_usuario', 'left');
 			$this->db->join('cpp_usuarios as u2', 'c.id_supervisor = u2.id_usuario', 'left');
@@ -82,6 +87,8 @@ class CPPmodel extends CI_Model {
 				cpe.id as id_proyecto_empresa,
 				ca.actividad as actividad,
 				cpe.proyecto_empresa as proyecto_empresa,
+				ca.id_proyecto_tipo as id_proyecto_tipo,
+				cpt.tipo as proyecto_tipo,
 				c.id_usuario as id_usuario,
 				c.id_supervisor as id_supervisor,
 				c.id_digitador as id_digitador,
@@ -106,7 +113,10 @@ class CPPmodel extends CI_Model {
 				");
 			$this->db->from('cpp as c');
 		    $this->db->join('cpp_actividades as ca', 'ca.id = c.id_actividad', 'left');
-			$this->db->join('cpp_proyecto_empresa as cpe', 'cpe.id = ca.id_proyecto_empresa', 'left');
+
+		    $this->db->join('cpp_proyecto_tipo as cpt', 'cpt.id = ca.id_proyecto_tipo', 'left');
+
+			$this->db->join('cpp_proyecto_empresa as cpe', 'cpe.id = cpt.id_proyecto_empresa', 'left');
 			
 			$this->db->join('cpp_usuarios as u1', 'c.id_usuario = u1.id_usuario', 'left');
 			$this->db->join('cpp_usuarios as u2', 'c.id_supervisor = u2.id_usuario', 'left');
@@ -116,11 +126,11 @@ class CPPmodel extends CI_Model {
 			$this->db->join('usuario as uss', 'uss.id = u2.id_usuario', 'left');
 			$this->db->join('usuario as usss', 'usss.id = u3.id_usuario', 'left');
 			$this->db->where('sha1(c.id)', $hash);
+		
 			$res=$this->db->get();
 			if($res->num_rows()>0){
 				return $res->result_array();
 			}
-			return FALSE;
 		}
 
 
@@ -131,9 +141,28 @@ class CPPmodel extends CI_Model {
 			return $res->result_array();
 		}
 
-		public function getActividadesPorPe($pe){
+		public function getTiposPorPe($pe){
 			if($pe!=""){
 				$this->db->where('id_proyecto_empresa', $pe);
+			}
+			$this->db->order_by('tipo', 'asc');
+			$res=$this->db->get('cpp_proyecto_tipo');
+
+			if($res->num_rows()>0){
+				$array=array();
+				foreach($res->result_array() as $key){
+					$temp=array();
+					$temp["id"]=$key["id"];
+					$temp["text"]=$key["tipo"];
+					$array[]=$temp;
+				}
+				return json_encode($array);
+			}
+		}
+
+		public function getActividadesPorTipo($pt){
+			if($pt!=""){
+				$this->db->where('id_proyecto_tipo', $pt);
 			}
 			$this->db->order_by('actividad', 'asc');
 			$res=$this->db->get('cpp_actividades');
@@ -149,6 +178,9 @@ class CPPmodel extends CI_Model {
 				return json_encode($array);
 			}
 		}
+
+		
+
 
 		public function eliminaActividad($hash){
 		  $this->db->where('sha1(id)', $hash);
@@ -193,7 +225,7 @@ class CPPmodel extends CI_Model {
 	/***********MANTENEDOR USUARIOS**********/
 
 
-		
+
 
 
 

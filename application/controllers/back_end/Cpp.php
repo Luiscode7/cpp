@@ -42,9 +42,14 @@ class CPP extends CI_Controller {
 			$this->load->view('back_end/cpp/cpp',$datos);
 		}
 
-		public function getActividadesPorPe(){
+		public function getTiposPorPe(){
 			$pe=$this->security->xss_clean(strip_tags($this->input->get_post("pe")));
-		    echo $this->CPPmodel->getActividadesPorPe($pe);exit;
+		    echo $this->CPPmodel->getTiposPorPe($pe);exit;
+		}
+
+		public function getActividadesPorTipo(){
+			$pt=$this->security->xss_clean(strip_tags($this->input->get_post("pt")));
+		    echo $this->CPPmodel->getActividadesPorTipo($pt);exit;
 		}
 
 		public function listaCPP(){

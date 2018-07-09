@@ -18,12 +18,14 @@ $route[''] = "inicio/index";
 	$route['formCPP'] = "back_end/cpp/formCPP";
 	$route['eliminaActividad'] = "back_end/cpp/eliminaActividad";
 	$route['getDataAct'] = "back_end/cpp/getDataAct";
-	
+	$route['getTiposPorPe'] = "back_end/cpp/getTiposPorPe";
+	$route['getActividadesPorTipo'] = "back_end/cpp/getActividadesPorTipo";
+		
 
 	$route['getVistaMensualView'] = "back_end/cpp/getVistaMensualView";
 	$route['getMantActView'] = "back_end/cpp/getMantActView";
 	$route['getMantUsView'] = "back_end/cpp/getMantUsView";
 	
-	
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

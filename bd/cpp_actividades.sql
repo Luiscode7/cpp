@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-07-2018 a las 16:32:06
+-- Tiempo de generación: 09-07-2018 a las 18:16:13
 -- Versión del servidor: 10.1.25-MariaDB
 -- Versión de PHP: 5.6.31
 
@@ -30,73 +30,98 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cpp_actividades` (
   `id` int(11) NOT NULL,
-  `id_proyecto_empresa` int(11) NOT NULL,
-  `actividad` varchar(250) NOT NULL,
+  `id_proyecto_tipo` int(11) NOT NULL,
+  `actividad` varchar(200) NOT NULL,
   `unidad` varchar(200) NOT NULL,
-  `valor` int(11) NOT NULL
+  `valor` int(11) NOT NULL,
+  `porcentaje` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `cpp_actividades`
 --
 
-INSERT INTO `cpp_actividades` (`id`, `id_proyecto_empresa`, `actividad`, `unidad`, `valor`) VALUES
-(1, 1, 'APOYO-CAMBIO DE TAP', 'HORAS', 1),
-(2, 1, 'APOYO-CUBICACION', 'HORAS', 1),
-(3, 1, 'APOYO-TERMINO DE PROYECTO', 'HORAS', 1),
-(4, 1, 'CORRECCIÓN-BTS', 'HORAS', 1),
-(5, 1, 'CORRECCIÓN-DESPLIEGUE', 'HORAS', 1),
-(6, 1, 'CORRECCIÓN-TRM', 'HORAS', 1),
-(7, 1, 'DIBUJO-INFORME DE RED', 'HORAS', 1),
-(8, 1, 'DIBUJO-PLANO OOCC', 'HORAS', 1),
-(9, 1, 'DISEÑO-BTS', 'METROS', 1),
-(10, 1, 'DISEÑO-DESPLIEGUE', 'HP', 1),
-(11, 1, 'DISEÑO-TRM', 'METROS', 1),
-(12, 1, 'DISEÑO-TRM', 'HP', 1),
-(13, 1, 'REVISION-BTS}', 'METROS', 1),
-(14, 1, 'REVISION-DESPLIEGUE', 'HP', 1),
-(15, 1, 'REVISION-TRM', 'METROS', 1),
-(16, 1, 'REVISION-TRM', 'HP', 1),
-(17, 1, 'FACTIBILIDAD VISITAS ', 'UNIDAD', 1),
-(18, 1, 'FACTIBILIDAD INGENIERIA DETALLE', 'MTS', 1),
-(19, 2, 'DIBUJO CARTOGRAFICO', 'HP', 1),
-(20, 2, 'DIBUJO PROYECTO HORIZONTAL', 'HP', 1),
-(21, 2, 'DIBUJO PROYECTO VERTICAL', 'HP', 1),
-(22, 2, 'RELEVAMIENTO CARTOGRAFICO', 'HP', 1),
-(23, 2, 'RELEVAMIENTO RUTA FIBRA OPTICA', 'METROS', 1),
-(24, 2, 'RELEVAMIENTO PROYECTOS HORIZONTAL', 'HP', 1),
-(25, 2, 'RELEVAMIENTO PROYECTOS VERTICAL', 'HP', 1),
-(26, 2, 'SURVEY DE PROYECTOS', 'UNIDAD', 1),
-(27, 2, 'FACTIBILIDAD VISITAS ', 'UNIDAD', 1),
-(28, 2, 'FACTIBILIDAD INGENIERIA DETALLE', 'MTS', 1),
-(29, 3, 'DIBUJO CARTOGRAFICO', 'HP', 1),
-(30, 3, 'DIBUJO PROYECTO HORIZONTAL', 'HP', 1),
-(31, 3, 'DIBUJO PROYECTO VERTICAL', 'HP', 1),
-(32, 3, 'RELEVAMIENTO CARTOGRAFICO', 'HP', 1),
-(33, 3, 'RELEVAMIENTO RUTA FIBRA OPTICA', 'METROS', 1),
-(34, 3, 'RELEVAMIENTO PROYECTOS HORIZONTAL', 'HP', 1),
-(35, 3, 'RELEVAMIENTO PROYECTOS VERTICAL', 'HP', 1),
-(36, 3, 'OSP IMPLANTACION ', 'UNIDAD', 1),
-(37, 4, 'DIBUJO CARTOGRAFICO', 'HP', 1),
-(38, 4, 'DIBUJO PROYECTO HORIZONTAL', 'HP', 1),
-(39, 4, 'DIBUJO PROYECTO VERTICAL', 'HP', 1),
-(40, 4, 'RELEVAMIENTO CARTOGRAFICO', 'HP', 1),
-(41, 4, 'RELEVAMIENTO RUTA FIBRA OPTICA', 'METROS', 1),
-(42, 4, 'RELEVAMIENTO PROYECTOS HORIZONTAL', 'HP', 1),
-(43, 4, 'RELEVAMIENTO PROYECTOS VERTICAL', 'HP', 1),
-(44, 4, 'SURVEY DE PROYECTOS', 'UNIDAD', 1),
-(45, 4, 'FACTIBILIDAD VISITAS ', 'UNIDAD', 1),
-(46, 4, 'FACTIBILIDAD INGENIERIA DETALLE', 'MTS', 1),
-(47, 5, 'DIBUJO CARTOGRAFICO', 'HP', 1),
-(48, 5, 'DIBUJO PROYECTO HORIZONTAL', 'HP', 1),
-(49, 5, 'DIBUJO PROYECTO VERTICAL', 'HP', 1),
-(50, 5, 'RELEVAMIENTO CARTOGRAFICO', 'HP', 1),
-(51, 5, 'RELEVAMIENTO RUTA FIBRA OPTICA', 'METROS', 1),
-(52, 5, 'RELEVAMIENTO PROYECTOS HORIZONTAL', 'HP', 1),
-(53, 5, 'RELEVAMIENTO PROYECTOS VERTICAL', 'HP', 1),
-(54, 5, 'SURVEY DE PROYECTOS', 'UNIDAD', 1),
-(55, 5, 'FACTIBILIDAD VISITAS ', 'UNIDAD', 1),
-(56, 5, 'FACTIBILIDAD INGENIERIA DETALLE', 'MTS', 1);
+INSERT INTO `cpp_actividades` (`id`, `id_proyecto_tipo`, `actividad`, `unidad`, `valor`, `porcentaje`) VALUES
+(1, 1, 'Levantamiento – HP', 'HP', 1, 100),
+(2, 1, 'Dibujo', 'HP', 1, 100),
+(3, 1, 'Control Calidad  HP', 'HP', 1, 100),
+(4, 2, 'Segmentación', 'HP', 1, 100),
+(5, 2, 'Conglomerado', 'HH', 1, 100),
+(6, 2, 'Diseño', 'HP', 1, 100),
+(7, 2, 'Control calidad', 'HH', 1, 100),
+(8, 3, 'Preparación información', 'HH', 1, 100),
+(9, 3, 'Relevamiento', 'HP', 1, 100),
+(10, 3, 'Diseño FO', 'MTS', 1, 100),
+(11, 3, 'Control Calidad', 'HH', 1, 100),
+(12, 4, 'Informe Retiro informacion', 'HH', 1, 100),
+(13, 4, 'Informe Desarrollo Plano y Carta', 'HH', 1, 100),
+(14, 4, 'Informe Control Calidad', 'HH', 1, 100),
+(15, 4, 'Presupuesto Retiro informacion', 'HH', 1, 100),
+(16, 4, 'Presupuesto Desarrollo Prepoyecto', 'HH', 1, 100),
+(17, 4, 'Presupuesto Control Calidad', 'HH', 1, 100),
+(18, 4, 'Proyecto Retiro informacion', 'HH', 1, 100),
+(19, 4, 'Proyecto Preparación información', 'HH', 1, 100),
+(20, 4, 'Proyecto Relevamiento', 'MTS', 1, 100),
+(21, 4, 'Proyecto Diseño FO CU', 'MTS', 1, 100),
+(22, 4, 'Proyecto Diseño HFC', 'HP', 1, 100),
+(23, 4, 'Proyecto Control Calidad', 'HH', 1, 100),
+(24, 4, 'BTS Retiro informacion', 'HH', 1, 100),
+(25, 4, 'BTS Preparación información', 'HH', 1, 100),
+(26, 4, 'BTS Relevamiento', 'MTS', 1, 100),
+(27, 4, 'BTS Diseño FO', 'MTS', 1, 100),
+(28, 4, 'BTS Control Calidad', 'HH', 1, 100),
+(29, 5, 'Retiro informacion', 'HH', 1, 100),
+(30, 5, 'Preparación información', 'HH', 1, 100),
+(31, 5, 'Relevamiento', 'HP', 1, 100),
+(32, 5, 'Diseño VERTICAL', 'HP', 1, 100),
+(33, 5, 'Control Calidad', 'HH', 1, 100),
+(34, 6, 'Preparación información', 'HH', 1, 100),
+(35, 6, 'Relevamiento', 'HP', 1, 100),
+(36, 6, 'Diseño VERTICAL', 'HP', 1, 100),
+(37, 6, 'Control Calidad', 'HH', 1, 100),
+(38, 7, 'Levantamiento – HP', 'HP', 1, 100),
+(39, 7, 'Dibujo', 'HP', 1, 100),
+(40, 7, 'Control Calidad  HP', 'HP', 1, 100),
+(41, 8, 'Macro DISEÑO', 'HP', 1, 100),
+(42, 8, 'Conglomerado', 'HH', 1, 100),
+(43, 8, 'Diseño', 'HP', 1, 100),
+(44, 8, 'Certificado de numero', 'HP', 1, 100),
+(45, 8, 'Permisos', 'HP', 1, 100),
+(46, 8, 'Control calidad', 'HH', 1, 100),
+(47, 9, 'Preparación información', 'HH', 1, 100),
+(48, 9, 'Relevamiento', 'HP', 1, 100),
+(49, 9, 'Diseño FTTX', 'HP', 1, 100),
+(50, 9, 'Control Calidad', 'HH', 1, 100),
+(51, 10, 'Dibujo cartografico', 'HP', 1, 100),
+(52, 10, 'Dibujo proyecto horizontal', 'HP', 1, 100),
+(53, 10, 'Dibujo proyecto vertical', 'HP', 1, 100),
+(54, 11, 'Relevamiento cartografico', 'HP', 1, 100),
+(55, 11, 'Relevamiento ruta F.O.', 'MTS', 1, 100),
+(56, 11, 'Relevamiento proyecto horizontal ', 'HP', 1, 100),
+(57, 11, 'Relevamiento proyecto vertical', 'HP', 1, 100),
+(58, 11, 'Survey de proyectos', 'UNIDAD', 1, 100),
+(59, 12, 'Factibilidad visita', 'UNIDAD', 1, 100),
+(60, 12, 'Factibilidad ingeniería de detalle', 'MTS', 1, 100),
+(61, 13, 'Dibujo cartografico', 'HP', 1, 100),
+(62, 13, 'Dibujo proyecto horizontal', 'HP', 1, 100),
+(63, 13, 'Dibujo proyecto vertical', 'HP', 1, 100),
+(64, 14, 'Relevamiento cartografico', 'HP', 1, 100),
+(65, 14, 'Relevamiento ruta F.O.', 'MTS', 1, 100),
+(66, 14, 'Relevamiento proyecto horizontal ', 'HP', 1, 100),
+(67, 14, 'Relevamiento proyecto vertical', 'HP', 1, 100),
+(68, 14, 'Survey de proyectos', 'UNIDAD', 1, 100),
+(69, 15, 'Factibilidad visita', 'UNIDAD', 1, 100),
+(70, 15, 'Factibilidad ingeniería de detalle', 'MTS', 1, 100),
+(71, 16, 'Dibujo cartografico', 'HP', 1, 100),
+(72, 16, 'Dibujo proyecto horizontal', 'HP', 1, 100),
+(73, 16, 'Dibujo proyecto vertical', 'HP', 1, 100),
+(74, 17, 'Relevamiento cartografico', 'HP', 1, 100),
+(75, 17, 'Relevamiento ruta F.O.', 'METROS', 1, 100),
+(76, 17, 'Relevamiento proyecto horizontal ', 'HP', 1, 100),
+(77, 17, 'Relevamiento proyecto vertical', 'HP', 1, 100),
+(78, 17, 'Survey de proyectos', 'UNIDAD', 1, 100),
+(79, 18, 'Factibilidad visita', 'UNIDAD', 1, 100),
+(80, 18, 'Factibilidad ingeniería de detalle', 'MTS', 1, 100);
 
 --
 -- Índices para tablas volcadas
@@ -116,7 +141,7 @@ ALTER TABLE `cpp_actividades`
 -- AUTO_INCREMENT de la tabla `cpp_actividades`
 --
 ALTER TABLE `cpp_actividades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -59,6 +59,7 @@
          },    
 
          "columns": [
+
             {
              "class":"","data": function(row,type,val,meta){
                 btn='<a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:14px;"></i> </a>';
@@ -75,6 +76,9 @@
               }
             },
             { "data": "usuario" ,"class":"margen-td "},
+            { "data": "proyecto_empresa" ,"class":"margen-td "},
+            { "data": "proyecto_tipo" ,"class":"margen-td "},
+            { "data": "actividad" ,"class":"margen-td "},
             { "data": "fecha" ,"class":"margen-td "},    
             { "data": "supervisor" ,"class":"margen-td "},
             { "data": "fecha_aprob" ,"class":"margen-td "},
@@ -126,14 +130,8 @@
             $("#id_cpp").val("");
             $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
 
-            $.getJSON('getActividadesPorPe', {pe: ""}, 
-              function(response) {
-                  $("#actividad").select2({
-                   allowClear: true,
-                   placeholder: 'Buscar...',
-                   data: response
-                  });
-            });
+            $('#proyecto_tipo').val("").trigger('change');
+            $('#actividad').val("").trigger('change');
 
         });     
 
@@ -181,16 +179,24 @@
             return false; 
         });
 
-        $.getJSON('getActividadesPorPe', {pe: ""}, 
-          function(response) {
-              $("#actividad").select2({
-               allowClear: true,
-               placeholder: 'Buscar...',
-               data: response
-              });
-        });
+         $.getJSON('getTiposPorPe', {pe: ""}, 
+            function(response) {
+                $("#proyecto_tipo").select2({
+                   allowClear: true,
+                   placeholder: 'Buscar...',
+                   data: response
+                });
+          });
 
-      
+         $.getJSON('getActividadesPorTipo', {pt: ""}, 
+            function(response) {
+                $("#actividad").select2({
+                 allowClear: true,
+                 placeholder: 'Buscar...',
+                 data: response
+                });
+          });
+
      /*******MODINFORME**********/
         $(document).off('click', '.btn_edita').on('click', '.btn_edita',function(event) {
            hash=$(this).attr("data-hash");
@@ -220,11 +226,27 @@
                       estado=data.datos[dato].id_estado;
                       id_actividad=data.datos[dato].id_actividad;
                       id_proyecto_empresa=data.datos[dato].id_proyecto_empresa;
+                      id_proyecto_tipo=data.datos[dato].id_proyecto_tipo;
+
                       $("#id_cpp").val(data.datos[dato].hash_id);
                       $("#proyecto_empresa option[value='"+data.datos[dato].id_proyecto_empresa+"'").prop("selected", true);
 
                       setTimeout( function () {
-                         $.getJSON('getActividadesPorPe', {pe: id_proyecto_empresa}, 
+                         $.getJSON('getTiposPorPe', {pe: id_proyecto_empresa}, 
+                          function(response) {
+                              $("#proyecto_tipo").select2({
+                                 allowClear: true,
+                                 placeholder: 'Buscar...',
+                                 data: response
+                              });
+                        });
+                      
+                      $('#proyecto_tipo').val(id_proyecto_tipo).trigger('change');
+
+                      },1000); 
+
+                      setTimeout( function () {
+                        $.getJSON('getActividadesPorTipo', {pt: id_proyecto_tipo}, 
                           function(response) {
                               $("#actividad").select2({
                                allowClear: true,
@@ -232,10 +254,10 @@
                                data: response
                               });
                         });
-                      
                       $('#actividad').val(id_actividad).trigger('change');
 
-                      },1000); 
+                      },1500); 
+
 
                       $("#cantidad").val(data.datos[dato].cantidad);
                       $("#fecha_finalizacion").val(data.datos[dato].fecha);
@@ -297,19 +319,35 @@
             }
         });
 
-        $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
+
+         $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
           event.preventDefault();
           pe=$("#proyecto_empresa").val();
-          $('#actividad').html('').select2({data: [{id: '', text: ''}]});
-          $.getJSON('getActividadesPorPe', {pe: pe}, 
+          $('#proyecto_tipo').html('').select2({data: [{id: '', text: ''}]});
+          $.getJSON('getTiposPorPe', {pe: pe}, 
            function(response) {
-              $("#actividad").select2({
+              $("#proyecto_tipo").select2({
                allowClear: true,
                placeholder: 'Buscar...',
                data: response
               });
          });
         });
+
+        $(document).off('change', '#proyecto_tipo').on('change', '#proyecto_tipo', function(event) {
+          event.preventDefault();
+          pt=$("#proyecto_tipo").val();
+          $('#actividad').html('').select2({data: [{id: '', text: ''}]});
+          $.getJSON('getActividadesPorTipo', {pt: pt}, 
+           function(response) {
+              $("#actividad").select2({
+               allowClear: true,
+               placeholder: 'Buscar...',
+               data: response
+              });
+          });
+        });
+
 
      /********OTROS**********/
       
@@ -416,6 +454,9 @@
           <th>Acciones</th>
           <th>Estado</th>
           <th>Usuario</th>  
+          <th>Proyecto Empresa</th>  
+          <th>Proyecto Tipo</th>  
+          <th>Actividad</th>  
           <th>Fecha finalizaci&oacute;n</th>
           <th>Supervisor</th>
           <th>Fecha Aprobaci&oacute;n</th>
@@ -463,12 +504,21 @@
                         </div>
                       </div>  
 
-                      <div class="col-lg-5">  
+                      <div class="col-lg-3">  
+                        <div class="form-group">
+                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto tipo</label>
+                            <select id="proyecto_tipo" name="proyecto_tipo" class="custom-select custom-select-sm"  style="width:100%!important;">
+                            <option selected value="">Seleccione Tipo proyecto </option>
+                            </select>
+                        </div>
+                      </div>  
+
+                      <div class="col-lg-4">  
                         <div class="form-group">
                         <label>Actividad</label>
-                        <select id="actividad" name="actividad" style="width:100%!important;">
-                          <option value="">Ingrese actividad...</option>
-                        </select>
+                          <select id="actividad" name="actividad" class="custom-select custom-select-sm" style="width:100%!important;">
+                            <option selected value="">Ingrese actividad</option>
+                          </select>
                         </div>
                       </div>
 
@@ -493,7 +543,7 @@
                         </div>
                       </div>   
 
-                      <div class="col-lg-8">  
+                      <div class="col-lg-6">  
                       <div class="form-group">
                       <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Comentarios</label>
                           <input type="text" autocomplete="off" placeholder="Ingrese Comentarios" class="form-control form-control-sm"  name="comentarios" id="comentarios">
