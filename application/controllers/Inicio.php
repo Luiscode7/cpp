@@ -17,7 +17,7 @@ class Inicio extends CI_Controller {
 	}
 
     public function acceso(){
-		if(!$this->session->userdata("rutUsuario")){redirect("login");}
+		if(!$this->session->userdata("rutUserCPP")){redirect("login");}
 	}
 
 	public function index(){	
@@ -74,13 +74,7 @@ class Inicio extends CI_Controller {
 	}
 
 	public function unlogin(){
-		$this->session->unset_userdata("nombresUsuario"); 
-	    $this->session->unset_userdata("apellidosUsuario"); 
-		$this->session->unset_userdata("rutUsuario"); 
-		$this->session->unset_userdata("correo"); 
-		$this->session->unset_userdata("perfil");
-		$this->session->unset_userdata("ultimoacceso");
-		//$this->session->sess_destroy();
+		$this->session->sess_destroy();
 		redirect("");
 	}
 

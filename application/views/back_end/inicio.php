@@ -10,10 +10,10 @@
     $(".navbar").show();
     $.fn.modal.Constructor.prototype.enforceFocus = function() {}; 
     var base="<?php echo base_url()?>";
-    var perfil="<?php echo $this->session->userdata("perfil"); ?>";
+    var id_perfil_CPP="<?php echo $this->session->userdata("id_perfil_CPP"); ?>";
 
       $("#menu_cpp").addClass('disabled');
-      $(".contenedor_principal").html("<center><img src='<?php echo base_url()?>assets3/imagenes/loader2.gif' class='loader'></center>");
+      $(".contenedor_principal").html("<center><img src='<?php echo base_url()?>assets/imagenes/loader2.gif' class='loader'></center>");
 
       $("#menu_cpp").addClass('menuActivoh');     
       $("#menu_vista_mensual").removeClass('menuActivoh');     
@@ -29,7 +29,7 @@
     $(document).off('click', '#menu_cpp').on('click', '#menu_cpp',function(event) {
       event.preventDefault();
       $("#menu_cpp").addClass('disabled');
-      $(".contenedor_principal").html("<center><img src='<?php echo base_url()?>assets3/imagenes/loader2.gif' class='loader'></center>");
+      $(".contenedor_principal").html("<center><img src='<?php echo base_url()?>assets/imagenes/loader2.gif' class='loader'></center>");
 
       $("#menu_cpp").addClass('menuActivoh');     
       $("#menu_vista_mensual").removeClass('menuActivoh');     

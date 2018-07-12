@@ -18,8 +18,23 @@ $config = array(
                      'rules'   => 'trim|required'
                     ),
                array(
+                     'field'   => 'fecha_inicio',
+                     'label'   => 'Fecha inicio',
+                     'rules'   => 'trim|required'
+                    ),
+               array(
+                     'field'   => 'hora_inicio',
+                     'label'   => 'Hora inicio',
+                     'rules'   => 'trim|required'
+                    ),
+               array(
                      'field'   => 'fecha_finalizacion',
                      'label'   => 'Fecha finalización',
+                     'rules'   => 'trim|required'
+                    ),
+               array(
+                     'field'   => 'hora_finalizacion',
+                     'label'   => 'Hora término',
                      'rules'   => 'trim|required'
                     ),
                array(
@@ -31,6 +46,19 @@ $config = array(
                      'field'   => 'comentarios',
                      'label'   => 'Comentarios',
                      'rules'   => 'trim'
+                    )
+           ),
+
+            'formMantUs' => array(
+               array(
+                     'field'   => 'usuario',
+                     'label'   => 'Usuario',
+                     'rules'   => 'trim|required'
+                    ),
+               array(
+                     'field'   => 'perfil',
+                     'label'   => 'Perfil',
+                     'rules'   => 'trim|required'
                     )
            )
 

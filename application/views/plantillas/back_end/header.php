@@ -9,10 +9,10 @@
     </div>
 </noscript>
 <title><?php echo $titulo?></title>
-<link rel="icon" href="<?php echo base_url(); ?>assets3/imagenes/logo_splice22.png">
-<script src="<?php echo base_url();?>assets3/back_end/js/jquery.min.js" charset="UTF-8"></script>
-<script src="<?php echo base_url();?>assets3/back_end/js/loader.js" charset="UTF-8"></script>
-<link rel="stylesheet" href="<?php echo base_url();?>assets3/back_end/css/loader.css" >
+<link rel="icon" href="<?php echo base_url(); ?>assets/imagenes/logo_splice22.png">
+<script src="<?php echo base_url();?>assets/back_end/js/jquery.min.js" charset="UTF-8"></script>
+<script src="<?php echo base_url();?>assets/back_end/js/loader.js" charset="UTF-8"></script>
+<link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/loader.css" >
 <script type="text/javascript">
    google.charts.load('current', {'packages':['corechart','table','bar','line']});
 </script>
@@ -33,12 +33,23 @@
 
 <header>
   <?php 
-  $n=explode(" ",$this->session->userdata("nombresUsuario"));
+  $n=explode(" ",$this->session->userdata("nombresUsuarioCPP"));
+  $empresa=$this->session->userdata("empresaCPP");
   ?>
   
   <nav class="navbar navbar-expand-lg navbar-dark bg-light fixed-top nav-tabs-main">
     <a class="navbar-brand" href="#">
-      <img class="logo_splice"  class="d-inline-block align-top" alt="" src="<?php echo base_url();?>assets3/imagenes/logo_splice22.png"> 
+      <?php 
+      if($empresa=="km"){
+        ?>
+        <img class="logo_header_km" class="d-inline-block align-top" alt="" src="<?php echo base_url();?>assets/imagenes/nuevologokm.png">
+        <?php
+      }elseif ($empresa=="splice") {
+        ?>
+        <img class="logo_header" class="d-inline-block align-top" alt="" src="<?php echo base_url();?>assets/imagenes/logo_splice22.png"> 
+        <?php
+      }
+      ?>
     </a>
    
      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,15 +61,6 @@
         <li id="menu_cpp" class="nav-item">
           <a class="nav-link" href="#"><i class="fas fa-table"></i> Control Productividad Personas</a>
         </li>
-        <!-- <li id="menu_vista_mensual" class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-table"></i> Vista mensual </a>
-        </li>
-        <li id="menu_mant_act" class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-file"></i> Mantenedor actividades</a>
-        </li>
-        <li id="menu_usuarios" class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-user"></i> Usuarios</a>
-        </li> -->
        </ul>
 
       <ul class="nav navbar-nav ml-auto">

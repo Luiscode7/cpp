@@ -1,15 +1,22 @@
+<style type="text/css">
+  .btn_elimina{
+    margin-left: 10px!important;
+  }
+</style>
 <script type="text/javascript">
   $(function(){
 
   /*****DEFINICIONES*****/
       $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+      $('.clockpicker').clockpicker();
       var fecha_hoy="<?php echo $fecha_hoy; ?>";
-      $("#desdef").val(fecha_hoy);
+      var fecha_anio_atras="<?php echo $fecha_anio_atras; ?>";
+      $("#desdef").val(fecha_anio_atras);
       $("#hastaf").val(fecha_hoy);   
-      var session="<?php echo $this->session->userdata("id"); ?>";
-      var perfil="<?php echo $this->session->userdata("perfil"); ?>";
+      var idUsuarioCPP="<?php echo $this->session->userdata("idUsuarioCPP"); ?>";
+      var id_perfil_CPP="<?php echo $this->session->userdata("id_perfil_CPP"); ?>";
       var base="<?php echo base_url();?>";
-    
+
       $.extend(true,$.fn.dataTable.defaults,{
         info:false,
         paging:true,
@@ -26,13 +33,12 @@
         language : {
           url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
         },
-        
       });
 
     /*****DATATABLE*****/  
       var table_cpp = $('#tabla_cpp').DataTable({
         "iDisplayLength":50, 
-        "aaSorting" : [[3,'asc']],
+        "aaSorting" : [[1,'asc']],
         "scrollY": 420,
         "scrollX": true,
          select: true,
@@ -55,15 +61,33 @@
             data: function(param){
                 param.desde = $("#desdef").val();
                 param.hasta = $("#hastaf").val();
+
+                if(id_perfil_CPP==1 || id_perfil_CPP==2){//ADMIN,GERENTES
+                  accion = 1;//TODO
+                }
+                if(id_perfil_CPP==3){//SUPERVISOR
+                  accion = 2;//SU PERSONAL
+                }
+                if(id_perfil_CPP==4){//EJECUTOR
+                  accion = 3;//SUS REGISTROS
+                }
+                param.accion = accion
+
             }
          },    
 
          "columns": [
-
             {
              "class":"","data": function(row,type,val,meta){
-                btn='<a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:14px;"></i> </a>';
-                btn+='<a href="#!" title="Eliminar" data-hash="'+row.hash_id+'" class="btn_elimina"><i class="fa fa-trash" style="font-size:14px;"></i> </a>';
+                if(id_perfil_CPP==1 || id_perfil_CPP==3){
+                  btn='<center><a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:15px;"></i> </a>';
+                  btn+='<a href="#!" title="Eliminar" data-hash="'+row.hash_id+'" class="btn_elimina"><i class="fa fa-trash" style="font-size:15px;"></i> </a></center>';
+                }else if(id_perfil_CPP==4 && idUsuarioCPP==row.id_usuario){
+                  btn='<center><a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:15px;"></i> </a>';
+                  //btn+='<a href="#!" title="Eliminar" data-hash="'+row.hash_id+'" class="btn_elimina"><i class="fa fa-trash" style="font-size:14px;"></i> </a></center>';
+                }else{
+                   btn="<center>-</center>";
+                }
                 return btn;
               }
             },
@@ -71,25 +95,51 @@
              "class":"","data": function(row,type,val,meta){
                 if(row.estado==0){
                     b='<i class="fa fa-question-circle" style="color:red;font-size:13px;margin-top:2px;"></i> '+row.estado_str+'';
+                }else
+                if(row.estado==1){
+                    b='<i class="fa fa-check-circle" style="color:#1E748D;font-size:13px;margin-top:2px;"></i> '+row.estado_str+'';
                 }
                 return b;
               }
             },
-            { "data": "usuario" ,"class":"margen-td "},
-            { "data": "proyecto_empresa" ,"class":"margen-td "},
-            { "data": "proyecto_tipo" ,"class":"margen-td "},
-            { "data": "actividad" ,"class":"margen-td "},
-            { "data": "fecha" ,"class":"margen-td "},    
-            { "data": "supervisor" ,"class":"margen-td "},
-            { "data": "fecha_aprob" ,"class":"margen-td "},
-            { "data": "digitador" ,"class":"margen-td "},
-            { "data": "fecha_dig" ,"class":"margen-td "},
-            { "data": "proyecto_desc" ,"class":"margen-td "},
-            { "data": "cantidad" ,"class":"margen-td "},
-            { "data": "comentarios" ,"class":"margen-td "},
-            { "data": "ultima_actualizacion" ,"class":"margen-td "}
+            { "data": "ejecutor" ,"class":"margen-td"},
+            { "data": "fecha_inicio" ,"class":"margen-td"},
+            {
+             "class":"","data": function(row,type,val,meta){
+                return row.hora_inicio.substring(0, 5);
+              }
+            },
+            { "data": "fecha_termino" ,"class":"margen-td"},
+            {
+             "class":"","data": function(row,type,val,meta){
+                return row.hora_termino.substring(0, 5);
+              }
+            },
+            {
+             "class":"","data": function(row,type,val,meta){
+                return row.duracion;
+              }
+            },
+            { "data": "proyecto_empresa" ,"class":"margen-td"},
+            { "data": "proyecto_tipo" ,"class":"margen-td"},
+            { "data": "actividad" ,"class":"margen-td"},
+            { "data": "proyecto_desc" ,"class":"margen-td"},
+            { "data": "unidad" ,"class":"margen-td"},    
+            { "data": "cantidad" ,"class":"margen-td"},    
+            { "data": "supervisor" ,"class":"margen-td"},
+            { "data": "fecha_aprob" ,"class":"margen-td"},
+            {
+             "class":"","data": function(row,type,val,meta){
+                return row.hora_aprob.substring(0, 5);
+              }
+            },
+            { "data": "digitador" ,"class":"margen-td"},
+            { "data": "fecha_dig" ,"class":"margen-td"},
+            { "data": "comentarios" ,"class":"margen-td"},
+            { "data": "ultima_actualizacion" ,"class":"margen-td"}
          ]
         }); 
+        
 
         setTimeout( function () {
           var table_cpp = $.fn.dataTable.fnTables(true);
@@ -119,7 +169,7 @@
         });
 
 
-      /*******NUEVOINFORME**********/
+      /*******NUEVO**********/
 
         $(document).off('click', '.btn_cpp').on('click', '.btn_cpp',function(event) {
             $('#modal_cpp').modal('toggle'); 
@@ -129,10 +179,10 @@
             $('#formCPP')[0].reset();
             $("#id_cpp").val("");
             $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
-
             $('#proyecto_tipo').val("").trigger('change');
             $('#actividad').val("").trigger('change');
-
+            $("#estado").attr("disabled", true);
+            $("#unidad_medida").attr("disabled", true);
         });     
 
         $(document).off('submit', '#formCPP').on('submit', '#formCPP',function(event) {
@@ -148,31 +198,52 @@
                   dataType: "json",
                   contentType : false,
                   beforeSend:function(){
-                    /*$(".btn_ingresa_cpp").attr("disabled", true);
+                    $(".btn_ingresa_cpp").attr("disabled", true);
                     $(".cierra_mod_cpp").attr("disabled", true);
-                    $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);*/
+                    $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);
+                    $(".btn_ingresa_cpp").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Cargando...');
                   },
                   success: function (data) {
                     if(data.res == "error"){
-                       $(".btn_ingresa_cpp").attr("disabled", false);
-                       $(".cierra_mod_cpp").attr("disabled", false);
+                        $(".btn_ingresa_cpp").attr("disabled", false);
+                        $(".cierra_mod_cpp").attr("disabled", false);
+                        $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+                        $("#estado").attr("disabled", true);
+                        $("#unidad_medida").attr("disabled", true);
+
                         $.notify(data.msg, {
                           className:'error',
                           globalPosition: 'top right',
                           autoHideDelay:5000,
                         });
-                        $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+
+                        if($("#id_cpp").val()!=""){
+                          $(".btn_ingresa_cpp").html('<i class="fa fa-edit"></i> Modificar');
+                          $('#modal_cpp').modal("toggle");
+                        }else{
+                          $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
+                        }
+
                     }else if(data.res == "ok"){
-                      $(".btn_ingresa_cpp").attr("disabled", false);
-                      $(".cierra_mod_cpp").attr("disabled", false);
-                      $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
-                      $.notify(data.msg, {
-                        className:'success',
-                        globalPosition: 'top right',
-                        autoHideDelay:5000,
-                      });
-                      /*$('#modal_cpp').modal("toggle");*/
-                      table_cpp.ajax.reload();
+                        $(".btn_ingresa_cpp").attr("disabled", false);
+                        $(".cierra_mod_cpp").attr("disabled", false);
+                        $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+                        $("#estado").attr("disabled", true);
+                        $("#unidad_medida").attr("disabled", true);
+                        
+                        $.notify(data.msg, {
+                          className:'success',
+                          globalPosition: 'top right',
+                          autoHideDelay:5000,
+                        });
+                        table_cpp.ajax.reload();
+
+                        if($("#id_cpp").val()!=""){
+                          $(".btn_ingresa_cpp").html('<i class="fa fa-edit"></i> Modificar');
+                          $('#modal_cpp').modal("toggle");
+                        }else{
+                          $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
+                        }
                     }
                   }
             });
@@ -197,7 +268,7 @@
                 });
           });
 
-     /*******MODINFORME**********/
+     /*******MODIFICAR**********/
         $(document).off('click', '.btn_edita').on('click', '.btn_edita',function(event) {
            hash=$(this).attr("data-hash");
            $(".btn_ingresa_cpp").html('<i class="fa fa-edit" ></i> Modificar');
@@ -216,13 +287,25 @@
               data:{hash:hash},
               dataType:"json",
               beforeSend:function(){
-               /*$(".btn_ingresa_cpp").prop("disabled",true); 
-               $(".cierra_mod_cpp").prop("disabled",true); */
+               $(".btn_ingresa_cpp").prop("disabled",true); 
+               $(".cierra_mod_cpp").prop("disabled",true); 
               },
               success: function (data) {
                 if(data.res=="ok"){
-
-                  for(dato in data.datos){
+                  setTimeout( function () {
+                      $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+                      $("#unidad_medida").attr("disabled", true);
+                       if(id_perfil_CPP==1 || id_perfil_CPP==3){
+                         $("#estado").attr("disabled", false);
+                         /*$("#apr_sp").show();*/
+                       }else{
+                         /*$("#apr_sp").hide();*/
+                        $("#estado").attr("disabled", true);
+                       }
+                       
+                  },1000); 
+                   $("#estado").attr("disabled", true);
+                   for(dato in data.datos){
                       estado=data.datos[dato].id_estado;
                       id_actividad=data.datos[dato].id_actividad;
                       id_proyecto_empresa=data.datos[dato].id_proyecto_empresa;
@@ -230,6 +313,7 @@
 
                       $("#id_cpp").val(data.datos[dato].hash_id);
                       $("#proyecto_empresa option[value='"+data.datos[dato].id_proyecto_empresa+"'").prop("selected", true);
+                      $("#estado option[value='"+data.datos[dato].estado+"'").prop("selected", true);
 
                       setTimeout( function () {
                          $.getJSON('getTiposPorPe', {pe: id_proyecto_empresa}, 
@@ -243,7 +327,7 @@
                       
                       $('#proyecto_tipo').val(id_proyecto_tipo).trigger('change');
 
-                      },1000); 
+                      },600); 
 
                       setTimeout( function () {
                         $.getJSON('getActividadesPorTipo', {pt: id_proyecto_tipo}, 
@@ -256,15 +340,16 @@
                         });
                       $('#actividad').val(id_actividad).trigger('change');
 
-                      },1500); 
-
+                      },1200); 
 
                       $("#cantidad").val(data.datos[dato].cantidad);
-                      $("#fecha_finalizacion").val(data.datos[dato].fecha);
+                      $("#fecha_inicio").val(data.datos[dato].fecha_inicio);
+                      $("#hora_inicio").val(data.datos[dato].hora_inicio.substring(0, 5));
+                      $("#fecha_finalizacion").val(data.datos[dato].fecha_termino);
+                      $("#hora_finalizacion").val(data.datos[dato].hora_termino.substring(0, 5));
                       $("#proyecto_desc").val(data.datos[dato].proyecto_desc);
                       $("#comentarios").val(data.datos[dato].comentarios);
                   }
-                  $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
                 }
               },
               error : function(xhr, textStatus, errorThrown ) {
@@ -320,7 +405,7 @@
         });
 
 
-         $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
+        $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
           event.preventDefault();
           pe=$("#proyecto_empresa").val();
           $('#proyecto_tipo').html('').select2({data: [{id: '', text: ''}]});
@@ -331,7 +416,8 @@
                placeholder: 'Buscar...',
                data: response
               });
-         });
+          });
+          $("#unidad_medida").val("");
         });
 
         $(document).off('change', '#proyecto_tipo').on('change', '#proyecto_tipo', function(event) {
@@ -346,6 +432,24 @@
                data: response
               });
           });
+          $("#unidad_medida").val("");
+        });
+
+        $(document).off('change', '#actividad').on('change', '#actividad', function(event) {
+          event.preventDefault();
+          ac=$("#actividad").val();
+          $.post('getUmPorActividad'+"?"+$.now(),{"ac": ac}, function(data) {
+              if(data.res=="ok"){
+               $("#unidad_medida").val(data.dato);
+              }else{
+                /*$.notify(data.msg, {
+                  className:'error',
+                  globalPosition: 'top right',
+                  autoHideDelay:5000,
+                });*/
+              }
+          },"json");          
+          
         });
 
 
@@ -388,10 +492,28 @@
         });
 
 
-        $(document).off('click', '.btn_excel_informe').on('click', '.btn_excel_informe',function(event) {
+        $(document).off('click', '.btn_excel_act').on('click', '.btn_excel_act',function(event) {
            event.preventDefault();
-           hash=$("#id_cpp").val();
-           window.location="excelInforme/"+hash;
+           var desde = $("#desdef").val();
+           var hasta = $("#hastaf").val();
+          
+           if(desde==""){
+             $.notify("Debe seleccionar una fecha de inicio.", {
+                 className:'error',
+                 globalPosition: 'top right'
+             });  
+             return false;
+           }
+           if(hasta==""){
+             $.notify("Debe seleccionar una fecha de término.", {
+                 className:'error',
+                 globalPosition: 'top right'
+             });  
+            return false;
+           }
+           
+           window.location="excelTareas/"+desde+"/"+hasta;
+
         });
 
   })
@@ -403,7 +525,7 @@
     <div class="col-6 col-lg-2">
          <div class="form-group"> 
          <button type="button" class="btn-block btn btn-sm btn-sm btn-outline-primary btn_cpp">
-         <i class="fa fa-plus-circle"></i> Nuevo 
+         <i class="fa fa-plus-circle"></i> Nuevo
          </button>
          </div>
     </div>
@@ -420,7 +542,7 @@
     </div>
     </div>
 
-    <div class="col-lg-3">
+    <div class="col-lg-5">
        <div class="form-group">
         <input type="text" placeholder="Ingrese su busqueda..." id="buscador_inf" class="buscador_inf form-control form-control-sm">
        </div>
@@ -436,7 +558,7 @@
 
     <div class="col-6 col-lg-1">  
          <div class="form-group">
-         <button type="button" disabled class="btn-block btn btn-sm btn-outline-primary btn-primary btn_excel_inf">
+         <button type="button" class="btn-block btn btn-sm btn-outline-primary btn-primary btn_excel_act">
          <i class="fa fa-save"></i> Excel 
          </button>
          </div>
@@ -453,17 +575,23 @@
         <tr>
           <th>Acciones</th>
           <th>Estado</th>
-          <th>Usuario</th>  
+          <th>Ejecutor</th>  
+          <th>Fecha inicio</th>
+          <th>Hora inicio</th>
+          <th>Fecha fin.</th>
+          <th>Hora fin.</th>
+          <th>Duraci&oacute;n (horas)</th>
           <th>Proyecto Empresa</th>  
           <th>Proyecto Tipo</th>  
           <th>Actividad</th>  
-          <th>Fecha finalizaci&oacute;n</th>
-          <th>Supervisor</th>
-          <th>Fecha Aprobaci&oacute;n</th>
-          <th>Digitador</th> 
-          <th>Fecha Digitaci&oacute;n</th>   
           <th>Proyecto Descripci&oacute;n</th>
+          <th>Unidad</th>
           <th>Cantidad</th>
+          <th>Supervisor</th> 
+          <th>Fecha Aprob</th>   
+          <th>Hora Aprob</th>   
+          <th>Digitador</th>
+          <th>Fecha digitaci&oacute;n</th>
           <th>Observaciones</th>    
           <th>&Uacute;ltima actualizaci&oacute;n</th>    
         </tr>
@@ -488,11 +616,12 @@
                 <legend class="form-ing-border">Ingreso de actividades</legend>
                     
                     <div class="form-row">
+                      
                       <div class="col-lg-3">  
                         <div class="form-group">
                          <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto empresa</label>
                             <select id="proyecto_empresa" name="proyecto_empresa" class="custom-select custom-select-sm">
-                            <option selected value="">Seleccione Proyecto empresa</option>
+                            <option selected value="">Seleccione proyecto empresa</option>
                             <?php  
                             foreach($proyecto_empresa as $p){
                               ?>
@@ -508,12 +637,12 @@
                         <div class="form-group">
                          <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto tipo</label>
                             <select id="proyecto_tipo" name="proyecto_tipo" class="custom-select custom-select-sm"  style="width:100%!important;">
-                            <option selected value="">Seleccione Tipo proyecto </option>
+                            <option selected value="">Seleccione tipo proyecto </option>
                             </select>
                         </div>
                       </div>  
 
-                      <div class="col-lg-4">  
+                      <div class="col-lg-3">  
                         <div class="form-group">
                         <label>Actividad</label>
                           <select id="actividad" name="actividad" class="custom-select custom-select-sm" style="width:100%!important;">
@@ -522,12 +651,42 @@
                         </div>
                       </div>
 
+                      <div class="col-lg-3">  
+                        <div class="form-group">
+                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto descripci&oacute;n</label>
+                            <input type="text" id="proyecto_desc" autocomplete="off" placeholder="Ingrese Proyecto descripci&oacute;n" class="form-control form-control-sm"  name="proyecto_desc">
+                        </div>
+                      </div>   
+
+                      <div class="col-lg-2">  
+                        <div class="form-group">
+                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Unidad medida</label>
+                            <input type="text" autocomplete="off"  placeholder="" class="form-control form-control-sm"  name="" id="unidad_medida">
+                        </div>
+                      </div>  
+
+
                       <div class="col-lg-2">  
                         <div class="form-group">
                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Cantidad</label>
-                            <input type="text" autocomplete="off" placeholder="Ingrese cantidad" class="inttext form-control form-control-sm"  name="cantidad" id="cantidad">
+                            <input type="text" maxlength="3" autocomplete="off" placeholder="" class="inttext form-control form-control-sm"  name="cantidad" id="cantidad">
                         </div>
                       </div>  
+
+                      <div class="col-lg-2">  
+                        <div class="form-group">
+                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Fecha inicio</label>
+                            <input type="text" autocomplete="off" placeholder="Ingrese Fecha inicio" class="fecha_normal fecha_inicio form-control form-control-sm"  name="fecha_inicio" id="fecha_inicio">
+                        </div>
+                      </div>    
+
+
+                      <div class="col-lg-2">  
+                       <div class="form-group">   
+                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Hora inicio</label>
+                            <input type="text" autocomplete="off"  class="clockpicker form-control form-control-sm"  data-autoclose="true"  data-align="top"  placeholder="Hora" autocomplete="on"  id="hora_inicio"  name="hora_inicio">
+                       </div>
+                      </div>
 
                       <div class="col-lg-2">  
                         <div class="form-group">
@@ -536,28 +695,29 @@
                         </div>
                       </div>    
 
-                      <div class="col-lg-4">  
-                        <div class="form-group">
-                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto descripci&oacute;n</label>
-                            <input type="text" id="proyecto_desc" autocomplete="off" placeholder="Ingrese Proyecto descripci&oacute;n" class="form-control form-control-sm"  name="proyecto_desc">
+                      <div class="col-lg-2">  
+                        <div class="form-group">   
+                          <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Hora finalizaci&oacute;n</label>
+                          <input type="text" autocomplete="off"  class="clockpicker form-control form-control-sm"  data-autoclose="true"  data-align="top"  placeholder="Hora" autocomplete="on"  id="hora_finalizacion"  name="hora_finalizacion">
                         </div>
-                      </div>   
+                      </div>
+
+                      <div class="col-lg-2">  
+                        <div class="form-group">
+                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Estado</label>
+                              <select id="estado" name="estado" class="custom-select custom-select-sm">
+                              <option selected value="0">Pendiente supervisor </option>
+                              <option value="1" id="apr_sp">Aprobado supervisor </option>
+                            </select>
+                        </div>
+                      </div>  
 
                       <div class="col-lg-6">  
-                      <div class="form-group">
-                      <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Comentarios</label>
-                          <input type="text" autocomplete="off" placeholder="Ingrese Comentarios" class="form-control form-control-sm"  name="comentarios" id="comentarios">
-                      </div>
-                      </div> 
-
-                      <!-- <div class="col-lg-2">  
                         <div class="form-group">
-                        <label>Estado</label>
-                        <select id="actividad" name="actividad" style="width:100%!important;">
-                          <option value="">Ingrese actividad...</option>
-                        </select>
+                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Comentarios</label>
+                            <input type="text" autocomplete="off" placeholder="Ingrese Comentarios" class="form-control form-control-sm"  name="comentarios" id="comentarios">
                         </div>
-                      </div> -->
+                      </div> 
 
                     </div>
                 </fieldset>
