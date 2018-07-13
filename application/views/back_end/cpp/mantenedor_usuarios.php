@@ -22,7 +22,7 @@
 	        "scrollX": true,
            info:true,
            paging:false,
-	        select: true,
+	         select: true,
 	        columnDefs:[
 	         /* { "name": "acciones",targets: [0],searcheable : false,orderable:false}, 
 	          {targets: [8], orderData: [5,6]}, //al ordenar por fecha, se ordenera por especialidad,comuna
@@ -62,8 +62,15 @@
 	         ]
         }); 
 
+        $(document).on('keyup paste', '#buscador_us', function() {
+          tabla_mant_us.search($(this).val().trim()).draw();
+        });
 
-         $(document).off('submit', '#formMantUs').on('submit', '#formMantUs',function(event) {
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+
+        $(document).off('submit', '#formMantUs').on('submit', '#formMantUs',function(event) {
             var url="<?php echo base_url()?>";
             var formElement = document.querySelector("#formMantUs");
             var formData = new FormData(formElement);
@@ -103,6 +110,8 @@
                        $('#select_usuario').val("").trigger('change');
                        $(".btn_agregar_us").html(' <i class="fa fa-plus"></i> Agregar');
                        tabla_mant_us.ajax.reload();
+                    }else if(data.res == "sess"){
+                      window.location="unlogin";
                     }
                   }
             });
@@ -125,8 +134,8 @@
               data:{hash:hash},
               dataType:"json",
               beforeSend:function(){
-               /*$(".btn_agregar_us").prop("disabled",true); 
-               */
+                /*$(".btn_agregar_us").prop("disabled",true); 
+                */
               },
               success: function (data) {
                 if(data.res=="ok"){
@@ -138,6 +147,13 @@
                   }
                   $(".btn_agregar_us").html('<i class="fa fa-edit" ></i> Modificar');
                   $("#formMantUs input,#formMantUs select,#formMantUs button,#formMantUs").prop("disabled", false);
+                }else if(data.res=="ok"){
+                    $.notify("Problemas en el servidor, intente más tarde.", {
+                      className:'warn',
+                      globalPosition: 'top right'
+                    });
+                }else if(data.res == "sess"){
+                  window.location="unlogin";
                 }
               },
               error : function(xhr, textStatus, errorThrown ) {
@@ -181,11 +197,13 @@
                     globalPosition: 'top right'
                   });
                  tabla_mant_us.ajax.reload();
-                }else{
+                }else if(data.res=="error"){
                   $.notify(data.msg, {
                     className:'danger',
                     globalPosition: 'top right'
                   });
+                }else if(data.res == "sess"){
+                  window.location="unlogin";
                 }
               },"json");
             }
@@ -287,6 +305,14 @@
 
 <!-- LISTADO -->
 <hr>
+
+
+  <div class="col-lg-6 offset-3" style="margin-top: 10px;">
+     <div class="form-group">
+      <input type="text" placeholder="Ingrese su busqueda..." id="buscador_us" class="buscador_us form-control form-control-sm">
+     </div>
+  </div>
+
   <div class="form-row">
     <div class="col">
     <table id="tabla_mant_us" class="table table-hover table-bordered dt-responsive nowrap" style="width:100%">

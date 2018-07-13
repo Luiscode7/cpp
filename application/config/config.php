@@ -32,10 +32,10 @@ $config['cache_query_string'] = FALSE;
 $config['encryption_key'] = 'fh4kdkkkaoe30njgoe92rkdkkobec333';
 $config['sess_driver'] = 'files';//$config['sess_driver'] = 'native';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 19200;
+$config['sess_expiration'] = 0;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
+$config['sess_time_to_update'] = 300000;
 $config['sess_regenerate_destroy'] = FALSE;
 
 $config['cookie_prefix']	= '';

@@ -2,6 +2,16 @@
   .btn_elimina{
     margin-left: 10px!important;
   }
+  .ver_obs_desp,.ver_obs{
+    cursor: pointer;
+    display: inline;
+    margin-left: 5px;
+    font-size: 13px;
+    color: #2780E3;
+  }
+  .btndesp span:hover{
+    color:#26A69A!important;
+  }
 </style>
 <script type="text/javascript">
   $(function(){
@@ -182,18 +192,24 @@
             },
             { "data": "digitador" ,"class":"margen-td"},
             { "data": "fecha_dig" ,"class":"margen-td"},
-            { "data": "comentarios" ,"class":"margen-td"},
+
+            {
+             "class":"centered margen-td","data": function(row,type,val,meta){
+              obs=row.comentarios.toLowerCase().capitalize();
+              var str = obs;
+              if(str.length > 40) {
+                 str = str.substring(0,40)+"...";
+                 return "<span class='btndesp2'>"+str+"</span><span title='Ver texto completo' class='ver_obs_desp' data-tit="+obs.replace(/ /g,"_")+" data-title="+obs.replace(/ /g,"_")+">Ver más</span>";
+              }else{
+                 return "<span class='btndesp2' data-title="+obs.replace(/ /g,"_")+">"+obs+"</span>";
+              }
+              }
+            },
+
             { "data": "ultima_actualizacion" ,"class":"margen-td"}
          ]
         }); 
         
-
-        setTimeout( function () {
-          var table_cpp = $.fn.dataTable.fnTables(true);
-          if ( table_cpp.length > 0 ) {
-              $(table_cpp).dataTable().fnAdjustColumnSizing();
-        }}, 2000 );  
-
         $(document).on('keyup paste', '#buscador_inf', function() {
           table_cpp.search($(this).val().trim()).draw();
         });
@@ -214,6 +230,30 @@
            $(".btn_filtra_cpp").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Filtrando');
            table_cpp.ajax.reload();
         });
+
+        $(document).on('click', '.ver_obs_desp', function(event) {
+            event.preventDefault();
+            val=$(this).attr("data-tit");
+            elem=$(this);
+            if(elem.text()=="Ver más"){
+              elem.html("Ocultar");     
+              elem.attr("title","Acortar texto");
+              elem.prev(".btndesp2").text(val.replace(/_/g, ' '));
+              var table = $.fn.dataTable.fnTables(true);
+              if ( table.length > 0 ) {
+                  $(table).dataTable().fnAdjustColumnSizing();
+              }
+            }else if(elem.text()=="Ocultar"){
+              val = val.substring(0,40)+"...";
+              elem.prev(".btndesp2").text(val.replace(/_/g, ' '));     
+              elem.html("Ver más");
+              elem.attr("title","Ver texto completo");
+              var table = $.fn.dataTable.fnTables(true);
+              if ( table.length > 0 ) {
+                  $(table).dataTable().fnAdjustColumnSizing();
+              }
+            }
+          });
 
 
     /*******NUEVO**********/
@@ -296,6 +336,8 @@
                         $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
                       }
                       iniciaEjecutor();
+                  }else if(data.res=="sess"){
+                    window.location="unlogin";
                   }
                 }
           });
@@ -403,7 +445,7 @@
                                data: response
                         });
                     });
-                    
+
                     setTimeout( function () {
                       $('#select_usuario').val(data.datos[dato].id_usuario).trigger('change'); 
                     }, 2000 );  
@@ -416,6 +458,8 @@
                     $("#proyecto_desc").val(data.datos[dato].proyecto_desc);
                     $("#comentarios").val(data.datos[dato].comentarios);
                 }
+              }else if(data.res=="sess"){
+                  window.location="unlogin";
               }
             },
             error : function(xhr, textStatus, errorThrown ) {
@@ -460,11 +504,13 @@
                   globalPosition: 'top right'
                 });
                table_cpp.ajax.reload();
-              }else{
+              }else if(data.res=="error"){
                 $.notify(data.msg, {
                   className:'danger',
                   globalPosition: 'top right'
                 });
+              }else if(data.res=="sess"){
+                  window.location="unlogin";
               }
             },"json");
           }

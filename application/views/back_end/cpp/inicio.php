@@ -34,12 +34,14 @@
       var perfil="<?php echo $this->session->userdata("id_perfil_CPP"); ?>";
       
       function inicio(perfil){
-        if(perfil==4){
+        if(perfil==1){
+          $("#menu_usuarios").show();
+        }else{
           $("#menu_usuarios").hide();
         }
       }
+
       inicio(perfil);
-      
       $(".nav-tabs-int").addClass('disabled');
       $("#menu_detalle_diario a").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Detalle de actividades diarias');
       $(".contenedor_produccion").html("<center><img src='<?php echo base_url()?>assets/imagenes/loader2.gif' class='loader'></center>");
@@ -55,7 +57,6 @@
         $("#menu_detalle_diario a").html('<i class="fa fa-list-ul"></i> Detalle de actividades diarias');
       });
       
-
       $(document).off('click', '#menu_detalle_diario').on('click', '#menu_detalle_diario',function(event) {
         event.preventDefault();
         $(".nav-tabs-int").addClass('disabled');

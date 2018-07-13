@@ -11,6 +11,13 @@ class CPP extends CI_Controller {
 		
 	}
 
+	public function checkLogin(){
+		if($this->session->userdata('idUsuarioCPP')==""){
+			echo json_encode(array('res'=>"sess"));exit;
+		}
+	}
+
+
 	public function visitas(){
 		$data=array("usuario"=>$this->session->userdata('nombresUsuarioCPP')." ".$this->session->userdata('apellidosUsuarioCPP'),
      	"fecha"=>date("Y-m-d G:i:s"),
@@ -68,6 +75,7 @@ class CPP extends CI_Controller {
 		public function formCPP(){
 			sleep(1);
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$id_cpp=$this->security->xss_clean(strip_tags($this->input->post("id_cpp")));
 				$actividad=$this->security->xss_clean(strip_tags($this->input->post("actividad")));
 				$ejecutor=$this->security->xss_clean(strip_tags($this->input->post("ejecutor")));
@@ -159,6 +167,7 @@ class CPP extends CI_Controller {
 
 		public function getDataAct(){
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 				$data=$this->CPPmodel->getDataAct($hash);
 				if($data){
@@ -172,6 +181,7 @@ class CPP extends CI_Controller {
 		}
 
 		public function eliminaActividad(){
+			$this->checkLogin();
 			$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 		    if($this->CPPmodel->eliminaActividad($hash)){
 		      echo json_encode(array("res" => "ok" , "msg" => "Registro eliminado correctamente."));
@@ -189,8 +199,6 @@ class CPP extends CI_Controller {
 		      echo json_encode(array("res" => "error" , "msg" => "Problemas cargando la unidad de medida, intente nuevamente."));
 		    }
 		}
-
-
 
 		public function excelTareas(){
 			$desde=$this->uri->segment(2);
@@ -316,6 +324,7 @@ class CPP extends CI_Controller {
 
 		public function formMantUs(){
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$id_mant_us=$this->security->xss_clean(strip_tags($this->input->post("id_mant_us")));
 				$usuario=$this->security->xss_clean(strip_tags($this->input->post("usuario")));
 				$perfil=$this->security->xss_clean(strip_tags($this->input->post("perfil")));
@@ -382,6 +391,7 @@ class CPP extends CI_Controller {
 
 		public function getDataMantUs(){
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 				$data=$this->CPPmodel->getDataMantUs($hash);
 				if($data){
@@ -395,6 +405,7 @@ class CPP extends CI_Controller {
 		}
 
 		public function eliminaUsuario(){
+			$this->checkLogin();
 			$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 		    if($this->CPPmodel->eliminaUsuario($hash)){
 		      echo json_encode(array("res" => "ok" , "msg" => "Registro eliminado correctamente."));
