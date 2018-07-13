@@ -281,12 +281,142 @@ class CPP extends CI_Controller {
 	/********MANTENEDOR ACTIVIDADES*********/
 
 		public function getMantActView(){
-	    	$fecha_hoy=date('Y-m-d');
-		    $datos = array(
-		       'fecha_hoy' => $fecha_hoy
+			$fecha_hoy=date('Y-m-d');
+			$proyecto_empresa=$this->CPPmodel->listaProyectoEmpresa();
+			$datos = array(
+				'proyecto_empresa'=>$proyecto_empresa,
+			   'fecha_hoy' => $fecha_hoy
 			);  
 			$this->load->view('back_end/cpp/mantenedor_actividades',$datos);
 		}
+
+
+		public function formActividad(){
+			sleep(1);
+			if($this->input->is_ajax_request()){
+				$id_actividad=$this->security->xss_clean(strip_tags($this->input->post("id_actividad")));
+				$id_proyecto_tipo=$this->security->xss_clean(strip_tags($this->input->post("proyecto_tipo")));
+				$actividad=$this->security->xss_clean(strip_tags($this->input->post("actividad")));
+				$valor=$this->security->xss_clean(strip_tags($this->input->post("valor")));
+				$unidad=$this->security->xss_clean(strip_tags($this->input->post("unidad")));
+				$porcentaje=$this->security->xss_clean(strip_tags($this->input->post("porcentaje")));
+				
+				if ($this->form_validation->run("formActividad") == FALSE){
+					echo json_encode(array('res'=>"error", 'msg' => strip_tags(validation_errors())));exit;
+				}else{	
+
+					$data_insert=array(
+						"id_proyecto_tipo"=>$id_proyecto_tipo,
+						"actividad"=>$actividad,
+						"unidad"=>$unidad,
+						"valor"=>$valor,
+						"porcentaje"=>$porcentaje
+					);	
+
+					if($id_actividad==""){
+						if($this->CPPmodel->formActividad($data_insert)){
+							echo json_encode(array('res'=>"ok", 'msg' => OK_MSG));exit;
+						}else{
+							echo json_encode(array('res'=>"ok", 'msg' => ERROR_MSG));exit;
+						}
+				   
+					}else{
+						$data_mod=array(
+							"id_proyecto_tipo"=>$id_proyecto_tipo,
+							"actividad"=>$actividad,
+							"unidad"=>$unidad,
+							"valor"=>$valor,
+							"porcentaje"=>$porcentaje
+					    );	
+
+			   			if($this->CPPmodel->modFormActividad($id_actividad,$data_mod)){
+							echo json_encode(array('res'=>"ok", 'msg' => MOD_MSG));exit;
+						}else{
+							echo json_encode(array('res'=>"error", 'msg' => ERROR_MSG));exit;
+					    }
+					}
+	    		}	
+			}
+		}
+
+		public function getDataActividad(){
+			if($this->input->is_ajax_request()){
+				$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
+				$data=$this->CPPmodel->getDataActividad($hash);
+				if($data){
+					echo json_encode(array('res'=>"ok", 'datos' => $data));exit;
+				}else{
+					echo json_encode(array('res'=>"error", 'msg' => ERROR_MSG));exit;
+				}	
+			}else{
+				exit('No direct script access allowed');
+			}
+		}
+
+		public function listaActividad(){
+			$empresa=$this->security->xss_clean(strip_tags($this->input->get_post("empresa")));
+			echo json_encode($this->CPPmodel->listaActividad($empresa));
+		}
+
+		public function deleteActividad(){
+			$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
+		    if($this->CPPmodel->deleteActividad($hash)){
+		      echo json_encode(array("res" => "ok" , "msg" => "Registro eliminado correctamente."));
+		    }else{
+		      echo json_encode(array("res" => "error" , "msg" => "Problemas eliminando el registro, intente nuevamente."));
+		    }
+		}
+
+		public function excelInforme(){
+			$empresa=$this->uri->segment(2);
+
+			if($empresa=="0"){
+				$empresa="";
+			}
+			
+			$dato=$this->CPPmodel->listaActividad($empresa);
+
+			$nombre="Lista de Actividades-".".xls";
+			header("Content-type: application/vnd.ms-excel;  charset=utf-8");
+			header("Content-Disposition: attachment; filename=$nombre");
+
+			?>
+			<style type="text/css">
+			.head{height: 30px; background-color:#0CC243;color:#fff; font-weight:bold;padding:10px;margin:10px;vertical-align:middle;}
+			td{text-align:center;   vertical-align:middle;}
+			</style>
+			<table align='center' border="1"> 
+	        <thead>
+	        <tr style="background-color:#F9F9F9">
+	              <th class="head">Proyecto Empresa</th>
+                  <th class="head">Actividad</th>
+                  <th class="head">Unidad</th>
+                  <th class="head">Valor</th>
+                  <th class="head">Porcentaje</th>
+	        </tr>
+	        </thead>	
+			<tbody>
+	        <?php 
+	        	if($dato !=FALSE){
+	      		foreach($dato as $sop){
+	      			?>
+	      			 <tr>
+						 <td><?php echo utf8_decode($sop["proyecto"]); ?></td>
+						 <td><?php echo utf8_decode($sop["actividad"]); ?></td>
+						 <td><?php echo utf8_decode($sop["unidad"]); ?></td>
+						 <td><?php echo utf8_decode($sop["valor"]); ?></td>
+						 <td><?php echo utf8_decode($sop["porcentaje"]); ?></td>
+					 </tr>
+	      			<?php
+	      		}
+	      		}
+	          ?>
+	        </tbody>
+        </table>
+    <?php
+
+	}
+
 
 	/********MANTENEDOR USUARIOS *********/
 

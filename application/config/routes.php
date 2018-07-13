@@ -28,9 +28,16 @@ $route[''] = "inicio/index";
 	$route['getVistaMensualView'] = "back_end/cpp/getVistaMensualView";
 
 
-
-/****** MANTENEDOR ACTIVIDADES*******/
+/****** MANTENEDOR ACTIVIDADES ******/
 	$route['getMantActView'] = "back_end/cpp/getMantActView";
+	$route['listaActividad'] = "back_end/cpp/listaActividad";
+	$route['formActividad'] = "back_end/cpp/formActividad";
+	$route['deleteActividad'] = "back_end/cpp/deleteActividad";
+	$route['getDataActividad'] = "back_end/cpp/getDataActividad";
+	$route['excelInforme/(:any)'] = "back_end/cpp/excelInforme/$1";
+
+	$route['getMantUsView'] = "back_end/cpp/getMantUsView";
+
 	
 
 /****** MANTENEDOR USUARIOS*******/

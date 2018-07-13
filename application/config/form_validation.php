@@ -53,7 +53,9 @@ $config = array(
                      'label'   => 'Comentarios',
                      'rules'   => 'trim'
                     )
-           ),
+
+            ),
+
 
             'formMantUs' => array(
                array(
@@ -66,7 +68,37 @@ $config = array(
                      'label'   => 'Perfil',
                      'rules'   => 'trim|required'
                     )
-           )
+               ),
 
+
+
+            'formActividad' => array(
+                  array(
+                        'field'   => 'proyecto_empresa',
+                        'label'   => 'Proyecto empresa',
+                        'rules'   => 'trim|required'
+                       ),
+                  array(
+                        'field'   => 'actividad',
+                        'label'   => 'actividad',
+                        'rules'   => 'trim|required'
+                       ),
+                  array(
+                        'field'   => 'unidad',
+                        'label'   => 'unidad',
+                        'rules'   => 'trim|required'
+                       ),
+                  array(
+                        'field'   => 'valor',
+                        'label'   => 'valor',
+                        'rules'   => 'trim|required'
+                       ),
+                  array(
+                        'field'   => 'porcentaje',
+                        'label'   => 'porcentaje',
+                        'rules'   => 'trim'
+                       )
+                  
+            )
 
  );
