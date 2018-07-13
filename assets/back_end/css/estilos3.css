@@ -412,7 +412,7 @@
   }
 
   @media (min-width: 768px){
-    .logo_splice {
+    .logo_header {
         margin-left: 10px;
         width: 160px!important;
         height: 65px!important;
@@ -560,19 +560,12 @@
       font-size: 12px;
     }
 
-    .select2-results__option {
-      padding: 5px!important; 
-      font-size: 13px; 
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-      font-size: 13px!important;
-    }
-
+    
     .select2-selection__clear{
       font-size: 16px!important;
     }
 
-    .logo_splice{
+    .logo_header{
       margin-left: 30px;
       margin-top: -15px;
       width:140px!important;
@@ -584,7 +577,7 @@
 
   @media (min-width:768px) {
     .nav-tabs-int>li>a {
-       font-size: 13px!important;
+       font-size: 14px!important;
        padding: 9px 16px!important;
     }
     .form-group{
@@ -601,19 +594,18 @@
        font-size: 12px;
     }
 
-    .select2-results__option {
-      padding: 1px!important; 
-      font-size: 12px; 
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-      font-size: 12px!important;
-    }
     
-    
-    .logo_splice{
+    .logo_header{
       margin-left:10px;
       width:160px!important;
       height:65px!important;
+    }
+
+    .logo_header_km{
+      margin-left:10px;
+      width:170px!important;
+      height:55px!important;
+      margin-top: -15px;
     }
    } 
 
@@ -626,7 +618,7 @@
 
   .navbar-nav li a{
     font-size: 14px!important;
-    padding: 13px 34px!important
+    padding: 13px 14px!important
   }
   
   .navbar-nav {
@@ -637,7 +629,7 @@
   
  .navbar-nav li a {
     font-size: 14px!important;
-    padding: 13px 34px!important;
+    padding: 13px 14px!important;
     height: 42px!important;
     margin-top: 15px!important;
 }
@@ -649,7 +641,7 @@
     /* margin-top: 15px!important; */
   }
 
-  .logo_splice{
+  .logo_header{
     margin-top: -21px; 
     margin-left: 30px;
 

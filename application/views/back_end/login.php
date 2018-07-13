@@ -7,13 +7,13 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <title><?php echo $titulo?></title>
-<script src="<?php echo base_url();?>assets3/back_end/js/jquery.min.js"></script>
-<script src="<?php echo base_url();?>assets3/back_end/js/bootstrap.min.js"></script>
-<link href="<?php echo base_url();?>assets3/back_end/css/normalize.min.css" rel="stylesheet">
-<link href="<?php echo base_url();?>assets3/back_end/css/bootstrap.min.css" rel="stylesheet">
-<link href="<?php echo base_url();?>assets3/back_end/css/estilos.css" rel="stylesheet">
-<link href="<?php echo base_url();?>assets3/back_end/css/fontawesome-all.min.css" rel="stylesheet">
-<link href="<?php echo base_url();?>assets3/back_end/css/form_style.css" rel="stylesheet">
+<script src="<?php echo base_url();?>assets/back_end/js/jquery.min.js"></script>
+<script src="<?php echo base_url();?>assets/back_end/js/bootstrap.min.js"></script>
+<link href="<?php echo base_url();?>assets/back_end/css/normalize.min.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/bootstrap.min.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/estilos.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/fontawesome-all.min.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/form_style.css" rel="stylesheet">
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -22,7 +22,7 @@
 <![endif]-->
 <style type="text/css" media="screen">
   body{
-  background-image: url("./assets3/imagenes/fondolog.jpg");
+  background-image: url("./assets/imagenes/fondolog.jpg");
   background-size: cover;
   }
 
