@@ -1,12 +1,12 @@
 <style type="text/css">
-	.btn_agregar_us,.btn_reset_us{
+	.btn_agregar_us,.btn_reset_us,.btn_excel_us{
 		margin-top: 30px;
 	}
 </style>
 <script type="text/javascript">
 	$(function(){
 		pf="<?php echo $id_perfil_CPP ?>";
-		$.getJSON('getUsuariosSel2', {}, 
+	  	$.getJSON('getUsuariosSel2', {}, 
 	        function(response) {
 	            $("#select_usuario").select2({
 	               allowClear: true,
@@ -20,8 +20,9 @@
 	        "aaSorting" : [[3,'asc']],
 	        "scrollY": 420,
 	        "scrollX": true,
+           info:true,
+           paging:false,
 	        select: true,
-	         
 	        columnDefs:[
 	         /* { "name": "acciones",targets: [0],searcheable : false,orderable:false}, 
 	          {targets: [8], orderData: [5,6]}, //al ordenar por fecha, se ordenera por especialidad,comuna
@@ -51,7 +52,9 @@
 	                return btn;
 	              }
 	            },
-	            { "data": "usuario" ,"class":"margen-td"},
+              { "data": "usuario" ,"class":"margen-td"},
+              { "data": "rut" ,"class":"margen-td"},
+              { "data": "cargo" ,"class":"margen-td"},
 	            { "data": "empresa" ,"class":"margen-td"},
               { "data": "perfil" ,"class":"margen-td"},
               { "data": "supervisor" ,"class":"margen-td"},
@@ -196,6 +199,14 @@
            $(".btn_agregar_us").html(' <i class="fa fa-plus"></i> Agregar');
         });
 
+        $(document).off('click', '.btn_excel_us').on('click', '.btn_excel_us',function(event) {
+           event.preventDefault();
+           window.location="excelusuarios";
+
+        });
+
+        
+
 
 	})	
 </script>
@@ -263,12 +274,19 @@
 		      </div>
 		    </div>
 
+        <div class="col-lg-1">
+           <div class="form-group">
+            <button type="button" class="btn-block btn btn-sm btn-primary btn_excel_us">
+             <i class="fa fa-save"></i> Excel
+            </button>
+          </div>
+        </div>
+
 	  </div>
 	<?php echo form_close(); ?>	
 
 <!-- LISTADO -->
 <hr>
-<br>
   <div class="form-row">
     <div class="col">
     <table id="tabla_mant_us" class="table table-hover table-bordered dt-responsive nowrap" style="width:100%">
@@ -276,6 +294,8 @@
         <tr>
           <th>Acciones</th>
           <th>Usuario</th>
+          <th>RUT</th>
+          <th>Cargo</th>
           <th>Empresa</th>
           <th>Perfil</th>
           <th>Supervisor</th>

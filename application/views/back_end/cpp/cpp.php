@@ -13,6 +13,8 @@
       var fecha_anio_atras="<?php echo $fecha_anio_atras; ?>";
       $("#desdef").val(fecha_anio_atras);
       $("#hastaf").val(fecha_hoy);   
+      $("#fecha_inicio").val(fecha_hoy);   
+      $("#fecha_finalizacion").val(fecha_hoy);   
       var idUsuarioCPP="<?php echo $this->session->userdata("idUsuarioCPP"); ?>";
       var id_perfil_CPP="<?php echo $this->session->userdata("id_perfil_CPP"); ?>";
       var base="<?php echo base_url();?>";
@@ -35,6 +37,48 @@
         },
       });
 
+      function visibilidadExcel(){
+        if(id_perfil_CPP==4){
+          $(".btn_excel_act").hide();
+        }else{
+          $(".btn_excel_act").show();
+        }
+      }
+
+      visibilidadExcel();
+
+      function iniciaEjecutor(){
+        if(id_perfil_CPP==4){
+          $.getJSON('getUsuariosSel2CPP', {idUsuarioCPP:idUsuarioCPP}, 
+              function(response) {
+                  $("#select_usuario").select2({
+                     allowClear: true,
+                     placeholder: 'Seleccione usuario',
+                     data: response
+              });
+          });
+          setTimeout( function () {
+           $('#select_usuario').val(idUsuarioCPP).trigger('change'); 
+          }, 2000 );  
+       
+          }else{
+
+            $.getJSON('getUsuariosSel2CPP', {}, 
+                function(response) {
+                    $("#select_usuario").select2({
+                       allowClear: true,
+                       placeholder: 'Seleccione usuario',
+                       data: response
+                });
+            });
+            setTimeout( function () {
+              $('#select_usuario').val(idUsuarioCPP).trigger('change'); 
+            }, 2000 );  
+          }
+      }
+
+      
+     
     /*****DATATABLE*****/  
       var table_cpp = $('#tabla_cpp').DataTable({
         "iDisplayLength":50, 
@@ -42,11 +86,9 @@
         "scrollY": 420,
         "scrollX": true,
          select: true,
-         
-        columnDefs:[
-         /* { "name": "acciones",targets: [0],searcheable : false,orderable:false}, 
-          {targets: [8], orderData: [5,6]}, //al ordenar por fecha, se ordenera por especialidad,comuna
-          {targets: [16],orderable:false,searcheable : false}, */
+
+         "columnDefs":[
+            {targets: [13],  visible : id_perfil_CPP!=4 ? true : false  }, 
         ],
 
         "ajax": {
@@ -83,7 +125,11 @@
                   btn='<center><a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:15px;"></i> </a>';
                   btn+='<a href="#!" title="Eliminar" data-hash="'+row.hash_id+'" class="btn_elimina"><i class="fa fa-trash" style="font-size:15px;"></i> </a></center>';
                 }else if(id_perfil_CPP==4 && idUsuarioCPP==row.id_usuario){
-                  btn='<center><a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:15px;"></i> </a>';
+                  if(row.estado==0){
+                      btn='<center><a href="#!" title="Editar" data-hash="'+row.hash_id+'" class="btn_edita"><i class="fa fa-edit" style="font-size:15px;"></i> </a>';
+                  }else{
+                    btn="<center>-</center>";
+                  }
                   //btn+='<a href="#!" title="Eliminar" data-hash="'+row.hash_id+'" class="btn_elimina"><i class="fa fa-trash" style="font-size:14px;"></i> </a></center>';
                 }else{
                    btn="<center>-</center>";
@@ -125,6 +171,7 @@
             { "data": "actividad" ,"class":"margen-td"},
             { "data": "proyecto_desc" ,"class":"margen-td"},
             { "data": "unidad" ,"class":"margen-td"},    
+            { "data": "valor" ,"class":"margen-td"},    
             { "data": "cantidad" ,"class":"margen-td"},    
             { "data": "supervisor" ,"class":"margen-td"},
             { "data": "fecha_aprob" ,"class":"margen-td"},
@@ -169,291 +216,310 @@
         });
 
 
-      /*******NUEVO**********/
+    /*******NUEVO**********/
 
-        $(document).off('click', '.btn_cpp').on('click', '.btn_cpp',function(event) {
-            $('#modal_cpp').modal('toggle'); 
-            $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
-            $(".btn_ingresa_cpp").attr("disabled", false);
-            $(".cierra_mod_cpp").attr("disabled", false);
-            $('#formCPP')[0].reset();
-            $("#id_cpp").val("");
-            $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
-            $('#proyecto_tipo').val("").trigger('change');
-            $('#actividad').val("").trigger('change');
-            $("#estado").attr("disabled", true);
-            $("#unidad_medida").attr("disabled", true);
-        });     
+      $(document).off('click', '.btn_cpp').on('click', '.btn_cpp',function(event) {
+          $('#modal_cpp').modal('toggle'); 
+          $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
+          $(".btn_ingresa_cpp").attr("disabled", false);
+          $(".cierra_mod_cpp").attr("disabled", false);
+          $('#formCPP')[0].reset();
+          $("#id_cpp").val("");
+          $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+          $('#proyecto_tipo').val("").trigger('change');
+          $('#actividad').val("").trigger('change');
+          $("#estado").attr("disabled", true);
+          $("#unidad_medida").attr("disabled", true);
+          $("#fecha_inicio").val(fecha_hoy);   
+          $("#fecha_finalizacion").val(fecha_hoy);   
+          iniciaEjecutor();
+      });     
 
-        $(document).off('submit', '#formCPP').on('submit', '#formCPP',function(event) {
-            var url="<?php echo base_url()?>";
-            var formElement = document.querySelector("#formCPP");
-            var formData = new FormData(formElement);
-              $.ajax({
-                  url: $('#formCPP').attr('action')+"?"+$.now(),  
-                  type: 'POST',
-                  data: formData,
-                  cache: false,
-                  processData: false,
-                  dataType: "json",
-                  contentType : false,
-                  beforeSend:function(){
-                    $(".btn_ingresa_cpp").attr("disabled", true);
-                    $(".cierra_mod_cpp").attr("disabled", true);
-                    $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);
-                    $(".btn_ingresa_cpp").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Cargando...');
-                  },
-                  success: function (data) {
-                    if(data.res == "error"){
-                        $(".btn_ingresa_cpp").attr("disabled", false);
-                        $(".cierra_mod_cpp").attr("disabled", false);
-                        $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
-                        $("#estado").attr("disabled", true);
-                        $("#unidad_medida").attr("disabled", true);
+      $(document).off('submit', '#formCPP').on('submit', '#formCPP',function(event) {
+          var url="<?php echo base_url()?>";
+          var formElement = document.querySelector("#formCPP");
+          var formData = new FormData(formElement);
+            $.ajax({
+                url: $('#formCPP').attr('action')+"?"+$.now(),  
+                type: 'POST',
+                data: formData,
+                cache: false,
+                processData: false,
+                dataType: "json",
+                contentType : false,
+                beforeSend:function(){
+                  $(".btn_ingresa_cpp").attr("disabled", true);
+                  $(".cierra_mod_cpp").attr("disabled", true);
+                  $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);
+                  $(".btn_ingresa_cpp").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Cargando...');
+                },
+                success: function (data) {
+                  if(data.res == "error"){
+                      $(".btn_ingresa_cpp").attr("disabled", false);
+                      $(".cierra_mod_cpp").attr("disabled", false);
+                      $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+                      $("#estado").attr("disabled", true);
+                      $("#unidad_medida").attr("disabled", true);
 
-                        $.notify(data.msg, {
-                          className:'error',
-                          globalPosition: 'top right',
-                          autoHideDelay:5000,
-                        });
+                      $.notify(data.msg, {
+                        className:'error',
+                        globalPosition: 'top right',
+                        autoHideDelay:5000,
+                      });
 
-                        if($("#id_cpp").val()!=""){
-                          $(".btn_ingresa_cpp").html('<i class="fa fa-edit"></i> Modificar');
-                          $('#modal_cpp').modal("toggle");
-                        }else{
-                          $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
-                        }
+                      if($("#id_cpp").val()!=""){
+                        $(".btn_ingresa_cpp").html('<i class="fa fa-edit"></i> Modificar');
+                        $('#modal_cpp').modal("toggle");
+                      }else{
+                        $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
+                      }
+                      iniciaEjecutor();
 
-                    }else if(data.res == "ok"){
-                        $(".btn_ingresa_cpp").attr("disabled", false);
-                        $(".cierra_mod_cpp").attr("disabled", false);
-                        $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
-                        $("#estado").attr("disabled", true);
-                        $("#unidad_medida").attr("disabled", true);
-                        
-                        $.notify(data.msg, {
-                          className:'success',
-                          globalPosition: 'top right',
-                          autoHideDelay:5000,
-                        });
-                        table_cpp.ajax.reload();
+                  }else if(data.res == "ok"){
+                      $(".btn_ingresa_cpp").attr("disabled", false);
+                      $(".cierra_mod_cpp").attr("disabled", false);
+                      $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+                      $("#estado").attr("disabled", true);
+                      $("#unidad_medida").attr("disabled", true);
+                      
+                      $.notify(data.msg, {
+                        className:'success',
+                        globalPosition: 'top right',
+                        autoHideDelay:5000,
+                      });
+                      table_cpp.ajax.reload();
 
-                        if($("#id_cpp").val()!=""){
-                          $(".btn_ingresa_cpp").html('<i class="fa fa-edit"></i> Modificar');
-                          $('#modal_cpp').modal("toggle");
-                        }else{
-                          $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
-                        }
-                    }
+                      if($("#id_cpp").val()!=""){
+                        $(".btn_ingresa_cpp").html('<i class="fa fa-edit"></i> Modificar');
+                        $('#modal_cpp').modal("toggle");
+                      }else{
+                        $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
+                      }
+                      iniciaEjecutor();
                   }
-            });
-            return false; 
-        });
-
-         $.getJSON('getTiposPorPe', {pe: ""}, 
-            function(response) {
-                $("#proyecto_tipo").select2({
-                   allowClear: true,
-                   placeholder: 'Buscar...',
-                   data: response
-                });
+                }
           });
+          return false; 
+      });
 
-         $.getJSON('getActividadesPorTipo', {pt: ""}, 
-            function(response) {
-                $("#actividad").select2({
+       $.getJSON('getTiposPorPe', {pe: ""}, 
+          function(response) {
+              $("#proyecto_tipo").select2({
                  allowClear: true,
                  placeholder: 'Buscar...',
                  data: response
-                });
-          });
-
-     /*******MODIFICAR**********/
-        $(document).off('click', '.btn_edita').on('click', '.btn_edita',function(event) {
-           hash=$(this).attr("data-hash");
-           $(".btn_ingresa_cpp").html('<i class="fa fa-edit" ></i> Modificar');
-           $('#formCPP')[0].reset();
-           $("#id_cpp").val("");
-           $('#modal_cpp').modal("toggle");
-           $(".cierra_mod_cpp").prop("disabled", false);
-           $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);
-
-            $.ajax({
-              url: "getDataAct"+"?"+$.now(),  
-              type: 'POST',
-              cache: false,
-              tryCount : 0,
-              retryLimit : 3,
-              data:{hash:hash},
-              dataType:"json",
-              beforeSend:function(){
-               $(".btn_ingresa_cpp").prop("disabled",true); 
-               $(".cierra_mod_cpp").prop("disabled",true); 
-              },
-              success: function (data) {
-                if(data.res=="ok"){
-                  setTimeout( function () {
-                      $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
-                      $("#unidad_medida").attr("disabled", true);
-                       if(id_perfil_CPP==1 || id_perfil_CPP==3){
-                         $("#estado").attr("disabled", false);
-                         /*$("#apr_sp").show();*/
-                       }else{
-                         /*$("#apr_sp").hide();*/
-                        $("#estado").attr("disabled", true);
-                       }
-                       
-                  },1000); 
-                   $("#estado").attr("disabled", true);
-                   for(dato in data.datos){
-                      estado=data.datos[dato].id_estado;
-                      id_actividad=data.datos[dato].id_actividad;
-                      id_proyecto_empresa=data.datos[dato].id_proyecto_empresa;
-                      id_proyecto_tipo=data.datos[dato].id_proyecto_tipo;
-
-                      $("#id_cpp").val(data.datos[dato].hash_id);
-                      $("#proyecto_empresa option[value='"+data.datos[dato].id_proyecto_empresa+"'").prop("selected", true);
-                      $("#estado option[value='"+data.datos[dato].estado+"'").prop("selected", true);
-
-                      setTimeout( function () {
-                         $.getJSON('getTiposPorPe', {pe: id_proyecto_empresa}, 
-                          function(response) {
-                              $("#proyecto_tipo").select2({
-                                 allowClear: true,
-                                 placeholder: 'Buscar...',
-                                 data: response
-                              });
-                        });
-                      
-                      $('#proyecto_tipo').val(id_proyecto_tipo).trigger('change');
-
-                      },600); 
-
-                      setTimeout( function () {
-                        $.getJSON('getActividadesPorTipo', {pt: id_proyecto_tipo}, 
-                          function(response) {
-                              $("#actividad").select2({
-                               allowClear: true,
-                               placeholder: 'Buscar...',
-                               data: response
-                              });
-                        });
-                      $('#actividad').val(id_actividad).trigger('change');
-
-                      },1200); 
-
-                      $("#cantidad").val(data.datos[dato].cantidad);
-                      $("#fecha_inicio").val(data.datos[dato].fecha_inicio);
-                      $("#hora_inicio").val(data.datos[dato].hora_inicio.substring(0, 5));
-                      $("#fecha_finalizacion").val(data.datos[dato].fecha_termino);
-                      $("#hora_finalizacion").val(data.datos[dato].hora_termino.substring(0, 5));
-                      $("#proyecto_desc").val(data.datos[dato].proyecto_desc);
-                      $("#comentarios").val(data.datos[dato].comentarios);
-                  }
-                }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                if (textStatus == 'timeout') {
-                    this.tryCount++;
-                    if (this.tryCount <= this.retryLimit) {
-                        $.notify("Reintentando...", {
-                          className:'info',
-                          globalPosition: 'top right'
-                        });
-                        $.ajax(this);
-                        return;
-                    } else{
-                       $.notify("Problemas en el servidor, intente nuevamente.", {
-                          className:'warn',
-                          globalPosition: 'top right'
-                        });     
-                        $('#modal_cpp').modal("toggle");
-                    }    
-                    return;
-                }
-
-                if (xhr.status == 500) {
-                    $.notify("Problemas en el servidor, intente más tarde.", {
-                      className:'warn',
-                      globalPosition: 'top right'
-                    });
-                    $('#modal_cpp').modal("toggle");
-                }
-            },timeout:5000
-          }); 
-
-        });
-
-        $(document).off('click', '.btn_elimina').on('click', '.btn_elimina',function(event) {
-          hash=$(this).attr("data-hash");
-          if(confirm("¿Esta seguro que desea eliminar este registro?")){
-              $.post('eliminaActividad'+"?"+$.now(),{"hash": hash}, function(data) {
-                if(data.res=="ok"){
-                  $.notify(data.msg, {
-                    className:'success',
-                    globalPosition: 'top right'
-                  });
-                 table_cpp.ajax.reload();
-                }else{
-                  $.notify(data.msg, {
-                    className:'danger',
-                    globalPosition: 'top right'
-                  });
-                }
-              },"json");
-            }
-        });
-
-
-        $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
-          event.preventDefault();
-          pe=$("#proyecto_empresa").val();
-          $('#proyecto_tipo').html('').select2({data: [{id: '', text: ''}]});
-          $.getJSON('getTiposPorPe', {pe: pe}, 
-           function(response) {
-              $("#proyecto_tipo").select2({
-               allowClear: true,
-               placeholder: 'Buscar...',
-               data: response
               });
-          });
-          $("#unidad_medida").val("");
         });
 
-        $(document).off('change', '#proyecto_tipo').on('change', '#proyecto_tipo', function(event) {
-          event.preventDefault();
-          pt=$("#proyecto_tipo").val();
-          $('#actividad').html('').select2({data: [{id: '', text: ''}]});
-          $.getJSON('getActividadesPorTipo', {pt: pt}, 
-           function(response) {
+       $.getJSON('getActividadesPorTipo', {pt: ""}, 
+          function(response) {
               $("#actividad").select2({
                allowClear: true,
                placeholder: 'Buscar...',
                data: response
               });
-          });
-          $("#unidad_medida").val("");
         });
 
-        $(document).off('change', '#actividad').on('change', '#actividad', function(event) {
-          event.preventDefault();
-          ac=$("#actividad").val();
-          $.post('getUmPorActividad'+"?"+$.now(),{"ac": ac}, function(data) {
+    /*******MODIFICAR**********/
+      $(document).off('click', '.btn_edita').on('click', '.btn_edita',function(event) {
+         hash=$(this).attr("data-hash");
+         $(".btn_ingresa_cpp").html('<i class="fa fa-edit" ></i> Modificar');
+         $('#formCPP')[0].reset();
+         $("#id_cpp").val("");
+         $('#modal_cpp').modal("toggle");
+         $(".cierra_mod_cpp").prop("disabled", false);
+         $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);
+
+          $.ajax({
+            url: "getDataAct"+"?"+$.now(),  
+            type: 'POST',
+            cache: false,
+            tryCount : 0,
+            retryLimit : 3,
+            data:{hash:hash},
+            dataType:"json",
+            beforeSend:function(){
+             $(".btn_ingresa_cpp").prop("disabled",true); 
+             $(".cierra_mod_cpp").prop("disabled",true); 
+            },
+            success: function (data) {
               if(data.res=="ok"){
-               $("#unidad_medida").val(data.dato);
-              }else{
-                /*$.notify(data.msg, {
-                  className:'error',
-                  globalPosition: 'top right',
-                  autoHideDelay:5000,
-                });*/
+                setTimeout( function () {
+                    $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", false);
+                    $("#unidad_medida").attr("disabled", true);
+                     if(id_perfil_CPP==1 || id_perfil_CPP==3){
+                       $("#estado").attr("disabled", false);
+                       /*$("#apr_sp").show();*/
+                     }else{
+                       /*$("#apr_sp").hide();*/
+                      $("#estado").attr("disabled", true);
+                     }
+                     
+                },1500); 
+                 $("#estado").attr("disabled", true);
+                 for(dato in data.datos){
+
+                    estado=data.datos[dato].id_estado;
+                    id_actividad=data.datos[dato].id_actividad;
+                    id_proyecto_empresa=data.datos[dato].id_proyecto_empresa;
+                    id_proyecto_tipo=data.datos[dato].id_proyecto_tipo;
+
+                    $("#id_cpp").val(data.datos[dato].hash_id);
+                    $("#proyecto_empresa option[value='"+data.datos[dato].id_proyecto_empresa+"'").prop("selected", true);
+                    $("#estado option[value='"+data.datos[dato].estado+"'").prop("selected", true);
+
+                    setTimeout( function () {
+                       $.getJSON('getTiposPorPe', {pe: id_proyecto_empresa}, 
+                        function(response) {
+                        $("#proyecto_tipo").select2({
+                           allowClear: true,
+                           placeholder: 'Buscar...',
+                           data: response
+                        });
+                    });
+                    
+                    $('#proyecto_tipo').val(id_proyecto_tipo).trigger('change');
+
+                    },600); 
+
+                    setTimeout( function () {
+                      $.getJSON('getActividadesPorTipo', {pt: id_proyecto_tipo}, 
+                        function(response) {
+                            $("#actividad").select2({
+                             allowClear: true,
+                             placeholder: 'Buscar...',
+                             data: response
+                            });
+                      });
+                    $('#actividad').val(id_actividad).trigger('change');
+
+                    },1200); 
+                    $('#select_usuario').html('').select2({data: [{id: '', text: ''}]});
+                    $.getJSON('getUsuariosSel2CPP', {idUsuarioCPP:data.datos[dato].id_usuario}, 
+                        function(response) {
+                            $("#select_usuario").select2({
+                               allowClear: true,
+                               placeholder: 'Seleccione usuario',
+                               data: response
+                        });
+                    });
+                    
+                    setTimeout( function () {
+                      $('#select_usuario').val(data.datos[dato].id_usuario).trigger('change'); 
+                    }, 2000 );  
+
+                    $("#cantidad").val(data.datos[dato].cantidad);
+                    $("#fecha_inicio").val(data.datos[dato].fecha_inicio);
+                    $("#hora_inicio").val(data.datos[dato].hora_inicio.substring(0, 5));
+                    $("#fecha_finalizacion").val(data.datos[dato].fecha_termino);
+                    $("#hora_finalizacion").val(data.datos[dato].hora_termino.substring(0, 5));
+                    $("#proyecto_desc").val(data.datos[dato].proyecto_desc);
+                    $("#comentarios").val(data.datos[dato].comentarios);
+                }
               }
-          },"json");          
-          
+            },
+            error : function(xhr, textStatus, errorThrown ) {
+              if (textStatus == 'timeout') {
+                  this.tryCount++;
+                  if (this.tryCount <= this.retryLimit) {
+                      $.notify("Reintentando...", {
+                        className:'info',
+                        globalPosition: 'top right'
+                      });
+                      $.ajax(this);
+                      return;
+                  } else{
+                     $.notify("Problemas en el servidor, intente nuevamente.", {
+                        className:'warn',
+                        globalPosition: 'top right'
+                      });     
+                      $('#modal_cpp').modal("toggle");
+                  }    
+                  return;
+              }
+
+              if (xhr.status == 500) {
+                  $.notify("Problemas en el servidor, intente más tarde.", {
+                    className:'warn',
+                    globalPosition: 'top right'
+                  });
+                  $('#modal_cpp').modal("toggle");
+              }
+          },timeout:5000
+        }); 
+
+      });
+
+      $(document).off('click', '.btn_elimina').on('click', '.btn_elimina',function(event) {
+        hash=$(this).attr("data-hash");
+        if(confirm("¿Esta seguro que desea eliminar este registro?")){
+            $.post('eliminaActividad'+"?"+$.now(),{"hash": hash}, function(data) {
+              if(data.res=="ok"){
+                $.notify(data.msg, {
+                  className:'success',
+                  globalPosition: 'top right'
+                });
+               table_cpp.ajax.reload();
+              }else{
+                $.notify(data.msg, {
+                  className:'danger',
+                  globalPosition: 'top right'
+                });
+              }
+            },"json");
+          }
+      });
+
+
+      $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
+        event.preventDefault();
+        pe=$("#proyecto_empresa").val();
+        $('#proyecto_tipo').html('').select2({data: [{id: '', text: ''}]});
+        $.getJSON('getTiposPorPe', {pe: pe}, 
+         function(response) {
+            $("#proyecto_tipo").select2({
+             allowClear: true,
+             placeholder: 'Buscar...',
+             data: response
+            });
         });
+        $("#unidad_medida").val("");
+      });
+
+      $(document).off('change', '#proyecto_tipo').on('change', '#proyecto_tipo', function(event) {
+        event.preventDefault();
+        pt=$("#proyecto_tipo").val();
+        $('#actividad').html('').select2({data: [{id: '', text: ''}]});
+        $.getJSON('getActividadesPorTipo', {pt: pt}, 
+         function(response) {
+            $("#actividad").select2({
+             allowClear: true,
+             placeholder: 'Buscar...',
+             data: response
+            });
+        });
+        $("#unidad_medida").val("");
+      });
+
+      $(document).off('change', '#actividad').on('change', '#actividad', function(event) {
+        event.preventDefault();
+        ac=$("#actividad").val();
+        $.post('getUmPorActividad'+"?"+$.now(),{"ac": ac}, function(data) {
+            if(data.res=="ok"){
+             $("#unidad_medida").val(data.dato);
+            }else{
+              /*$.notify(data.msg, {
+                className:'error',
+                globalPosition: 'top right',
+                autoHideDelay:5000,
+              });*/
+            }
+        },"json");          
+        
+      });
 
 
-     /********OTROS**********/
+    /********OTROS**********/
       
       $(".floattext").keydown(function (event) {
         if (event.shiftKey == true) {
@@ -471,6 +537,21 @@
         if($(this).val().indexOf('.') !== -1 && event.keyCode == 190)
             event.preventDefault(); 
       });
+
+      /*$(".hora_text").keydown(function (event) {
+        if (event.shiftKey == true) {
+            event.preventDefault();
+        }
+        if ((event.keyCode >= 48 && event.keyCode <= 57) || 
+            (event.keyCode >= 96 && event.keyCode <= 105) || 
+            event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 ||
+            event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190) {
+
+        } else {
+            event.preventDefault();
+        }
+
+      });*/
 
       $(".inttext").keydown(function (event) {
         if (event.shiftKey == true) {
@@ -490,7 +571,6 @@
           locale:"es",
           maxDate:"now"
         });
-
 
         $(document).off('click', '.btn_excel_act').on('click', '.btn_excel_act',function(event) {
            event.preventDefault();
@@ -586,6 +666,7 @@
           <th>Actividad</th>  
           <th>Proyecto Descripci&oacute;n</th>
           <th>Unidad</th>
+          <th>Valor</th>
           <th>Cantidad</th>
           <th>Supervisor</th> 
           <th>Fecha Aprob</th>   
@@ -616,7 +697,16 @@
                 <legend class="form-ing-border">Ingreso de actividades</legend>
                     
                     <div class="form-row">
-                      
+         
+                      <div class="col-lg-3">  
+                        <div class="form-group">
+                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Usuario</label>
+                            <select id="select_usuario" name="ejecutor" class="custom-select custom-select-sm"  style="width:100%!important;">
+                            <option selected value="">Seleccione usuario </option>
+                            </select>
+                        </div>
+                      </div> 
+
                       <div class="col-lg-3">  
                         <div class="form-group">
                          <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto empresa</label>
@@ -651,7 +741,7 @@
                         </div>
                       </div>
 
-                      <div class="col-lg-3">  
+                      <div class="col-lg-4">  
                         <div class="form-group">
                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto descripci&oacute;n</label>
                             <input type="text" id="proyecto_desc" autocomplete="off" placeholder="Ingrese Proyecto descripci&oacute;n" class="form-control form-control-sm"  name="proyecto_desc">
@@ -684,7 +774,7 @@
                       <div class="col-lg-2">  
                        <div class="form-group">   
                          <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Hora inicio</label>
-                            <input type="text" autocomplete="off"  class="clockpicker form-control form-control-sm"  data-autoclose="true"  data-align="top"  placeholder="Hora" autocomplete="on"  id="hora_inicio"  name="hora_inicio">
+                            <input type="text" autocomplete="off" maxlength="5" class="clockpicker hora_text form-control form-control-sm"  data-autoclose="true"  data-align="top"  placeholder="Hora" autocomplete="on"  id="hora_inicio"  name="hora_inicio">
                        </div>
                       </div>
 
@@ -698,7 +788,7 @@
                       <div class="col-lg-2">  
                         <div class="form-group">   
                           <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Hora finalizaci&oacute;n</label>
-                          <input type="text" autocomplete="off"  class="clockpicker form-control form-control-sm"  data-autoclose="true"  data-align="top"  placeholder="Hora" autocomplete="on"  id="hora_finalizacion"  name="hora_finalizacion">
+                          <input type="text" autocomplete="off"  maxlength="5"  class="clockpicker hora_text form-control form-control-sm"  data-autoclose="true"  data-align="top"  placeholder="Hora" autocomplete="on"  id="hora_finalizacion"  name="hora_finalizacion">
                         </div>
                       </div>
 

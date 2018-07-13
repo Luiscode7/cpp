@@ -60,12 +60,17 @@ class CPP extends CI_Controller {
 	        echo json_encode($this->CPPmodel->listaCPP($desde,$hasta,$accion));
 		}
 
+		public function getUsuariosSel2CPP(){
+			$id_usuario=$this->security->xss_clean(strip_tags($this->input->get_post("idUsuarioCPP")));
+		    echo $this->CPPmodel->getUsuariosSel2CPP($id_usuario);exit;
+		}
+
 		public function formCPP(){
 			sleep(1);
 			if($this->input->is_ajax_request()){
 				$id_cpp=$this->security->xss_clean(strip_tags($this->input->post("id_cpp")));
 				$actividad=$this->security->xss_clean(strip_tags($this->input->post("actividad")));
-				$id_usuario=$this->session->userdata("idUsuarioCPP");
+				$ejecutor=$this->security->xss_clean(strip_tags($this->input->post("ejecutor")));
 				$cantidad=$this->security->xss_clean(strip_tags($this->input->post("cantidad")));
 				$fecha_inicio=$this->security->xss_clean(strip_tags($this->input->post("fecha_inicio")));
 				$hora_inicio=$this->security->xss_clean(strip_tags($this->input->post("hora_inicio")));
@@ -80,10 +85,17 @@ class CPP extends CI_Controller {
 					echo json_encode(array('res'=>"error", 'msg' => strip_tags(validation_errors())));exit;
 				}else{	
 
+					if(!preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/", $hora_inicio)){
+		     			 echo json_encode(array("res" => "error" , "msg" => "Formato incorrecto para la hora de inicio, intente nuevamente."));exit;
+					}
+					if(!preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/", $hora_finalizacion)){
+		   			   echo json_encode(array("res" => "error" , "msg" => "Formato incorrecto para la hora de término, intente nuevamente."));exit;
+					}
+
 					$data_insert=array("id_actividad"=>$actividad,
-						"id_usuario"=>$id_usuario,
+						"id_usuario"=>$ejecutor,
 						"id_supervisor"=>0,
-						"id_digitador"=>$id_usuario,
+						"id_digitador"=>$this->session->userdata('idUsuarioCPP'),
 						"fecha_inicio"=>$fecha_inicio,
 						"hora_inicio"=>$hora_inicio,
 						"fecha_termino"=>$fecha_finalizacion,
@@ -207,6 +219,7 @@ class CPP extends CI_Controller {
 			          <th>Actividad</th>  
 			          <th>Proyecto Descripci&oacute;n</th>
 			          <th>Unidad</th>
+			          <th>Valor</th>
 			          <th>Cantidad</th>
 			          <th>Supervisor</th> 
 			          <th>Fecha Aprob</th>   
@@ -236,6 +249,7 @@ class CPP extends CI_Controller {
 								 <td><?php echo utf8_decode($det["actividad"]); ?></td>
 								 <td><?php echo utf8_decode($det["proyecto_desc"]); ?></td>
 								 <td><?php echo utf8_decode($det["unidad"]); ?></td>
+								 <td><?php echo utf8_decode($det["valor"]); ?></td>
 								 <td><?php echo utf8_decode($det["cantidad"]); ?></td>
 								 <td><?php echo utf8_decode($det["supervisor"]); ?></td>
 								 <td><?php echo utf8_decode($det["fecha_aprob"]); ?></td>
@@ -517,6 +531,53 @@ class CPP extends CI_Controller {
 		    }else{
 		      echo json_encode(array("res" => "error" , "msg" => "Problemas eliminando el registro, intente nuevamente."));
 		    }
+		}
+
+		public function excelusuarios(){
+	    	$nombre="reporte-usuarios.xls";
+			header("Content-type: application/vnd.ms-excel;  charset=utf-8");
+			header("Content-Disposition: attachment; filename=$nombre");
+			?>
+			<style type="text/css">
+				.head{font-size:13px;height: 30px; background-color:#1D7189;color:#fff; font-weight:bold;padding:10px;margin:10px;vertical-align:middle;}
+				td{font-size:12px;vertical-align:middle;}
+			</style>
+		    <h3>Usuarios CPP</h3>
+		        <table align='center' border="1"> 
+			        <thead>
+			        <tr style="background-color:#F9F9F9">
+			          <th>Usuario</th>
+			          <th>RUT</th>
+			          <th>Cargo</th>
+			          <th>Empresa</th>
+			          <th>Perfil</th>
+			          <th>Supervisor</th>
+			          <th>&Uacute;ltima actualizaci&oacute;n</th>
+			        </tr>
+			        </thead>	
+					<tbody>
+			        <?php 
+			        $usuarios=$this->CPPmodel->listaMantUsuarios();
+			        	if($usuarios !=FALSE){
+			      		foreach($usuarios as $us){
+			      			?>
+			      			 <tr>
+								 <td><?php echo utf8_decode($us["usuario"]); ?></td>
+								 <td><?php echo utf8_decode($us["rut"]); ?></td>
+								 <td><?php echo utf8_decode($us["cargo"]); ?></td>
+								 <td><?php echo utf8_decode($us["empresa"]); ?></td>
+								 <td><?php echo utf8_decode($us["perfil"]); ?></td>
+								 <td><?php echo utf8_decode($us["supervisor"]); ?></td>
+								 <td><?php echo utf8_decode($us["ultima_actualizacion"]); ?></td>
+							
+							 </tr>
+			      			<?php
+			      		}
+			      		}
+			          ?>
+			        </tbody>
+		        </table>
+		    <?php
 		}
 
 
