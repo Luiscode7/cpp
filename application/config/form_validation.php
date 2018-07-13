@@ -3,6 +3,11 @@
 $config = array(
            'formCPP' => array(
                array(
+                     'field'   => 'ejecutor',
+                     'label'   => 'Ejecutor',
+                     'rules'   => 'trim|required'
+                    ),
+               array(
                      'field'   => 'proyecto_empresa',
                      'label'   => 'Proyecto empresa',
                      'rules'   => 'trim|required'
@@ -12,6 +17,7 @@ $config = array(
                      'label'   => 'Actividad',
                      'rules'   => 'trim|required'
                     ),
+    
                array(
                      'field'   => 'cantidad',
                      'label'   => 'Cantidad',

@@ -29,6 +29,7 @@ class CPPmodel extends CI_Model {
 				cpe.id as id_proyecto_empresa,
 				ca.actividad as actividad,
 				ca.unidad as unidad,
+				ca.valor as valor,
 				cpe.proyecto_empresa as proyecto_empresa,
 				ca.id_proyecto_tipo as id_proyecto_tipo,
 				cpt.tipo as proyecto_tipo,
@@ -258,6 +259,32 @@ class CPPmodel extends CI_Model {
 			
 		}
 
+		public function getUsuariosSel2CPP($id_usuario){
+			$this->db->select('u.id as id,
+				u.primer_nombre as primer_nombre,
+				u.apellido_paterno as apellido_paterno,
+				u.apellido_materno as apellido_materno,
+				u.empresa as empresa');
+			$this->db->where('estado', "Activo");
+			if($id_usuario!=""){
+				$this->db->where('cu.id_usuario', $id_usuario);
+			}
+			$this->db->order_by('u.primer_nombre', 'asc');
+			$this->db->join('usuario as u', 'u.id = cu.id_usuario', 'left');
+			$res=$this->db->get("cpp_usuarios as cu");
+			if($res->num_rows()>0){
+				$array=array();
+				foreach($res->result_array() as $key){
+					$temp=array();
+					$temp["id"]=$key["id"];
+					$temp["text"]=$key["primer_nombre"]." ".$key["apellido_paterno"]." ".$key["apellido_materno"]." | ".$key["empresa"];
+					$array[]=$temp;
+				}
+				return json_encode($array);
+			}
+			return FALSE;
+		}
+
 	/***********VISTA MENSUAL**********/
 
 
@@ -319,9 +346,10 @@ class CPPmodel extends CI_Model {
 				u.id as id_usuario,
 				us.id as id_supervisor,
 				u.rut as rut,
+				c.cargo as cargo,
 				u.empresa as empresa,
-				CONCAT(u.primer_nombre,' ',u.apellido_paterno) as 'usuario',
-				CONCAT(us.primer_nombre,' ',us.apellido_paterno) as 'supervisor',
+				CONCAT(u.primer_nombre,' ',u.apellido_paterno,' ',u.apellido_materno) as 'usuario',
+				CONCAT(us.primer_nombre,' ',us.apellido_paterno,' ',us.apellido_materno) as 'supervisor',
 				up.perfil as perfil,
 				up.id as id_perfil,
 				cu.ultima_actualizacion as ultima_actualizacion
@@ -330,7 +358,7 @@ class CPPmodel extends CI_Model {
 			$this->db->join('cpp_usuarios as cu', 'cu.id_usuario = u.id', 'right');
 			$this->db->join('cpp_usuarios_perfiles as up', 'up.id = cu.id_perfil', 'left');
 			$this->db->join('usuario as us', 'us.id = cu.id_supervisor', 'left');
-			
+			$this->db->join('mantenedor_cargo as c', 'u.id_cargo = c.id', 'left');
 
 			if($this->session->userdata('idUsuarioCPP')!=432 and $this->session->userdata('idUsuarioCPP')!=824){
 				$this->db->where('(cu.id_usuario<>432 and cu.id_usuario<>824)');
