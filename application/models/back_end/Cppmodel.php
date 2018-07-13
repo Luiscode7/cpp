@@ -290,8 +290,61 @@ class CPPmodel extends CI_Model {
 
 
 	/***********MANTENEDOR ACTIVIDADES**********/
+	
+	public function formActividad($data){
+		if($this->db->insert('cpp_actividades', $data)){
+			$insert_id = $this->db->insert_id();
+			return $insert_id;
+		}
+		return FALSE;
+	}
 
+	public function modFormActividad($id,$data){
+		$this->db->where('sha1(id)', $id);
+		if($this->db->update('cpp_actividades', $data)){
+			return TRUE;
+		}
+		return FALSE;
+	}
 
+	public function listaActividad($empresa){
+		$this->db->select("SHA1(a.id) as 'hash_id', a.id as id, pe.proyecto_empresa as proyecto,
+		 pe.id as id_proyecto_empresa, a.id_proyecto_tipo as proyecto_tipo,
+		 a.actividad as actividad, a.unidad as unidad, a.valor as valor, a.porcentaje as porcentaje");
+		$this->db->from('cpp_actividades as a');
+		$this->db->join('cpp_proyecto_tipo as pt', 'pt.id = a.id_proyecto_tipo');
+		$this->db->join('cpp_proyecto_empresa as pe', 'pe.id = pt.id_proyecto_empresa');
+
+		if($empresa != ""){
+			$this->db->where("pe.id", $empresa);
+		}
+		$res=$this->db->get();
+		if($res->num_rows()>0){
+			return $res->result_array();
+		}
+		return FALSE;
+	}
+
+	public function deleteActividad($hash){
+		$this->db->where('sha1(id)', $hash);
+		  $this ->db->delete('cpp_actividades');
+		  return TRUE;
+	}
+
+	public function getDataActividad($hash){
+		$this->db->select("SHA1(a.id) as 'hash_id', a.id as id, pe.proyecto_empresa as proyecto, 
+		pe.id as id_proyecto_empresa, a.id_proyecto_tipo as id_proyecto_tipo, a.actividad as actividad,
+		 a.unidad as unidad, a.valor as valor, a.porcentaje as porcentaje");
+		$this->db->from('cpp_actividades as a');
+		$this->db->join('cpp_proyecto_tipo as pt', 'pt.id = a.id_proyecto_tipo');
+		$this->db->join('cpp_proyecto_empresa as pe', 'pe.id = pt.id_proyecto_empresa');
+		$this->db->where('sha1(a.id)', $hash);
+		$res=$this->db->get();
+		if($res->num_rows()>0){
+			return $res->result_array();
+		}
+		return FALSE;
+	}
 
 	/***********MANTENEDOR USUARIOS**********/
 
