@@ -134,8 +134,8 @@
     <div class="col-12"> 
        <ul class="nav nav-tabs navbar-left nav-tabs-int">
         <li id="menu_detalle_diario" class="active"><a><i class="fa fa-list-ul"></i> Detalle de actividades diarias</a></li>   
-        <!-- <li id="menu_vista_mensual" class="active"><a><i class="fa fa-list-ul"></i> Vista mensual</a></li>   
-        <li id="menu_mantenedor_actividades" class="active"><a><i class="fa fa-list-ul"></i> Mantenedor actividades</a></li> -->   
+        <!-- <li id="menu_vista_mensual" class="active"><a><i class="fa fa-list-ul"></i> Vista mensual</a></li>-->   
+        <li id="menu_mantenedor_actividades" class="active"><a><i class="fa fa-list-ul"></i> Mantenedor actividades</a></li>    
         <li id="menu_usuarios" class="active"><a><i class="fa fa-user"></i> Mantenedor Usuarios</a></li>   
       </ul>  
     </div> 
