@@ -311,9 +311,13 @@ class CPP extends CI_Controller {
 						"unidad"=>$unidad,
 						"valor"=>$valor,
 						"porcentaje"=>$porcentaje
-					);	
+					);
 
 					if($id_actividad==""){
+						if($this->CPPmodel->checkActividad($actividad)){
+							echo json_encode(array('res'=>"error", 'msg' => "Esta actividad ya se encuentra asignada a la aplicación."));exit;	
+						}
+
 						if($this->CPPmodel->formActividad($data_insert)){
 							echo json_encode(array('res'=>"ok", 'msg' => OK_MSG));exit;
 						}else{

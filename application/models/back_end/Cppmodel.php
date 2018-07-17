@@ -294,9 +294,9 @@ class CPPmodel extends CI_Model {
 	public function formActividad($data){
 		if($this->db->insert('cpp_actividades', $data)){
 			$insert_id = $this->db->insert_id();
-			return $insert_id;
-		}
-		return FALSE;
+				return $insert_id;
+			}
+			return FALSE;
 	}
 
 	public function modFormActividad($id,$data){
@@ -345,6 +345,16 @@ class CPPmodel extends CI_Model {
 		}
 		return FALSE;
 	}
+
+	public function checkActividad($id){
+		$this->db->where('actividad', $id);
+		$res=$this->db->get('cpp_actividades');
+		if($res->num_rows()>0){
+			return TRUE;
+		}
+		return FALSE;
+	}
+
 
 	/***********MANTENEDOR USUARIOS**********/
 

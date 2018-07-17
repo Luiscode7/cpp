@@ -19,7 +19,7 @@
   
     $.extend(true,$.fn.dataTable.defaults,{
       info:false,
-      paging:true,
+      paging:false,
       ordering:true,
       searching:true,
       lengthChange: false,
@@ -38,7 +38,7 @@
 
   /*****DATATABLE*****/  
     var table_cpp = $('#tabla_cpp').DataTable({
-      "iDisplayLength":50, 
+      "iDisplayLength":-1, 
       "aaSorting" : [[3,'asc']],
       "scrollY": 420,
       "scrollX": true,
@@ -137,9 +137,9 @@
                 dataType: "json",
                 contentType : false,
                 beforeSend:function(){
-                  /*$(".btn_ingresa_cpp").attr("disabled", true);
+                 $(".btn_ingresa_cpp").attr("disabled", true);
                   $(".cierra_mod_cpp").attr("disabled", true);
-                  $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);*/
+                  $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", true);
                 },
                 success: function (data) {
                   if(data.res == "error"){
@@ -160,7 +160,7 @@
                       globalPosition: 'top right',
                       autoHideDelay:5000,
                     });
-                    /*$('#modal_cpp').modal("toggle");*/
+                    $('#modal_cpp').modal("toggle");
                     table_cpp.ajax.reload();
                   }
                 }
@@ -265,7 +265,7 @@
 
       });
 
-      $(document).off('click', '.btn_elimina').on('click', '.btn_elimina',function(event) {
+      /*$(document).off('click', '.btn_elimina').on('click', '.btn_elimina',function(event) {
         hash=$(this).attr("data-hash");
         if(confirm("¿Esta seguro que desea eliminar este registro?")){
             $.post('deleteActividad'+"?"+$.now(),{"hash": hash}, function(data) {
@@ -283,7 +283,7 @@
               }
             },"json");
           }
-      });
+      });*/
 
 
        $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
@@ -299,6 +299,28 @@
             });
        });
       });
+
+      /*$(document).on('keyup', '#porcentaje', function(event) {
+          event.preventDefault();
+           var num = $("#porcentaje").val();
+          
+            if(num <= 0 || num > 100){
+              $("#porcentaje").css("border-color", "red");
+            }
+            else{
+              $("#porcentaje").css("border-color", "");
+            }
+        });*/
+
+      /*$(".validRange").onclick(function(event){
+        event.preventDefault();
+           var num = $("#porcentaje").val();
+          
+            if(num <= 0 || num > 100){
+              alert("porcentaje debe ser entre 1 y 100");
+            }
+            
+      });*/
 
       
    /********OTROS**********/
@@ -481,7 +503,7 @@
                       <div class="col-lg-3">  
                       <div class="form-group">
                       <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Porcentaje</label>
-                          <input type="number" min="0" max="100" autocomplete="off" placeholder="Ingrese Porcentaje" class="form-control form-control-sm"  name="porcentaje" id="porcentaje">
+                          <input type="text" minlength="1" maxlength="3" autocomplete="off" placeholder="Ingrese Porcentaje" class="inttext form-control form-control-sm"  name="porcentaje" id="porcentaje" onsubmit="return validarRango(this);">
                       </div>
                       </div> 
                     </div>
