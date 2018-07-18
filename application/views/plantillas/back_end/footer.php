@@ -9,7 +9,19 @@
 	
 </script>
 <footer class="footer text-center">
-	<p> &copy; Splice Chile <?php echo date("Y");?></p>
+	<?php 
+    if($this->session->userdata('empresaCPP')=="km"){
+	    ?>
+				<p> &copy; KM Telecomunicaciones <?php echo date("Y");?></p>
+	    <?php
+    }elseif ($this->session->userdata('empresaCPP')=="splice") {
+	    ?>
+				<p> &copy; Splice Chile <?php echo date("Y");?></p>
+
+	    <?php
+    }
+  ?>
+
 </footer>
 
 
@@ -30,11 +42,20 @@
 <link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/bootstrap.min.css" >
 <link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/bootstrap-datetimepicker.min2.css">
 <link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/normalize.min.css" rel="stylesheet">
-<link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/estilos3.css">
+
+<?php 
+    if($this->session->userdata('empresaCPP')=="km"){
+	    ?>
+			<link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/estilos_km.css">
+	    <?php
+    }elseif ($this->session->userdata('empresaCPP')=="splice") {
+	    ?>
+			<link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/estilos_splice.css">
+	    <?php
+    }
+  ?>
+
 <link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/fontawesome-all.min.css">
-
 <script src="<?php echo base_url();?>assets/back_end/js/dataTables.select.min.js"></script>
-
-
 </body>
 </html>
