@@ -96,7 +96,7 @@ $config = array(
                   array(
                         'field'   => 'porcentaje',
                         'label'   => 'porcentaje',
-                        'rules'   => 'trim'
+                        'rules'   => 'required|greater_than[0]|less_than[101]'
                        )
                   
             )

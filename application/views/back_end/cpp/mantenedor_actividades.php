@@ -19,7 +19,7 @@
   
     $.extend(true,$.fn.dataTable.defaults,{
       info:false,
-      paging:true,
+      paging:false,
       ordering:true,
       searching:true,
       lengthChange: false,
@@ -37,8 +37,8 @@
     });
 
   /*****DATATABLE*****/  
-    var table_cpp = $('#tabla_cpp').DataTable({
-      "iDisplayLength":50, 
+    var table_act = $('#tabla_act').DataTable({
+      "iDisplayLength":-1, 
       "aaSorting" : [[3,'asc']],
       "scrollY": 420,
       "scrollX": true,
@@ -53,8 +53,8 @@
       "ajax": {
           "url":"<?php echo base_url();?>listaActividad",
           "dataSrc": function (json) {
-            $(".btn_filtra_cpp").html('<i class="fa fa-cog fa-1x"></i><span class="sr-only"></span> Filtrar');
-            $(".btn_filtra_cpp").prop("disabled" , false);
+            $(".btn_filtra_act").html('<i class="fa fa-cog fa-1x"></i><span class="sr-only"></span> Filtrar');
+            $(".btn_filtra_act").prop("disabled" , false);
               return json;
           },    
           data: function(param){
@@ -80,13 +80,13 @@
       }); 
 
       setTimeout( function () {
-        var table_cpp = $.fn.dataTable.fnTables(true);
-        if ( table_cpp.length > 0 ) {
-            $(table_cpp).dataTable().fnAdjustColumnSizing();
+        var table_act = $.fn.dataTable.fnTables(true);
+        if ( table_act.length > 0 ) {
+            $(table_act).dataTable().fnAdjustColumnSizing();
       }}, 2000 );  
 
-      $(document).on('keyup paste', '#buscador_inf', function() {
-        table_cpp.search($(this).val().trim()).draw();
+      $(document).on('keyup paste', '#buscador_act', function() {
+        table_act.search($(this).val().trim()).draw();
       });
 
       String.prototype.capitalize = function() {
@@ -94,32 +94,31 @@
       }
 
       setTimeout( function () {
-        var table_cpp = $.fn.dataTable.fnTables(true);
-        if ( table_cpp.length > 0 ) {
-            $(table_cpp).dataTable().fnAdjustColumnSizing();
+        var table_act = $.fn.dataTable.fnTables(true);
+        if ( table_act.length > 0 ) {
+            $(table_act).dataTable().fnAdjustColumnSizing();
       }}, 100 ); 
 
-       $(document).off('click', '.btn_filtra_cpp').on('click', '.btn_filtra_cpp',function(event) {
+       $(document).off('click', '.btn_filtra_act').on('click', '.btn_filtra_act',function(event) {
           event.preventDefault();
            $(this).prop("disabled" , true);
-           $(".btn_filtra_cpp").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Filtrando');
-           table_cpp.ajax.reload();
+           $(".btn_filtra_act").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Filtrando');
+           table_act.ajax.reload();
         });
 
 
 
     /*******NUEVOINFORME**********/
 
-      $(document).off('click', '.btn_cpp').on('click', '.btn_cpp',function(event) {
-          $('#modal_cpp').modal('toggle'); 
-          $(".btn_ingresa_cpp").html('<i class="fa fa-save"></i> Guardar');
-          $(".btn_ingresa_cpp").attr("disabled", false);
-          $(".cierra_mod_cpp").attr("disabled", false);
+      $(document).off('click', '.btn_act').on('click', '.btn_act',function(event) {
+          $('#modal_act').modal('toggle'); 
+          $(".btn_ingresa_act").html('<i class="fa fa-save"></i> Guardar');
+          $(".btn_ingresa_act").attr("disabled", false);
+          $(".cierra_mod_act").attr("disabled", false);
           $('#formActividad')[0].reset();
           $("#id_actividad").val("");
           $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", false);
-
-          $('#proyecto_tipo').val("").trigger('change');
+          /*$('#proyecto_tipo_act').val("").trigger('change');*/
           $('#actividad').val("").trigger('change');
 
       });     
@@ -137,14 +136,14 @@
                 dataType: "json",
                 contentType : false,
                 beforeSend:function(){
-                  /*$(".btn_ingresa_cpp").attr("disabled", true);
-                  $(".cierra_mod_cpp").attr("disabled", true);
-                  $("#formCPP input,#formCPP select,#formCPP button,#formCPP").prop("disabled", true);*/
+                  $(".btn_ingresa_act").attr("disabled", true);
+                  $(".cierra_mod_act").attr("disabled", true);
+                  $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", true);
                 },
                 success: function (data) {
                   if(data.res == "error"){
-                     $(".btn_ingresa_cpp").attr("disabled", false);
-                     $(".cierra_mod_cpp").attr("disabled", false);
+                     $(".btn_ingresa_act").attr("disabled", false);
+                     $(".cierra_mod_act").attr("disabled", false);
                       $.notify(data.msg, {
                         className:'error',
                         globalPosition: 'top right',
@@ -152,16 +151,16 @@
                       });
                       $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", false);
                   }else if(data.res == "ok"){
-                    $(".btn_ingresa_cpp").attr("disabled", false);
-                    $(".cierra_mod_cpp").attr("disabled", false);
+                    $(".btn_ingresa_act").attr("disabled", false);
+                    $(".cierra_mod_act").attr("disabled", false);
                     $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", false);
                     $.notify(data.msg, {
                       className:'success',
                       globalPosition: 'top right',
                       autoHideDelay:5000,
                     });
-                    /*$('#modal_cpp').modal("toggle");*/
-                    table_cpp.ajax.reload();
+                    $('#modal_act').modal("toggle");
+                    table_act.ajax.reload();
                   }
                 }
           });
@@ -170,7 +169,7 @@
 
        $.getJSON('getTiposPorPe', {pe: ""}, 
           function(response) {
-              $("#proyecto_tipo").select2({
+              $("#proyecto_tipo_act").select2({
                  allowClear: true,
                  placeholder: 'Buscar...',
                  data: response
@@ -181,11 +180,11 @@
    /*******MODINFORME**********/
       $(document).off('click', '.btn_edita2').on('click', '.btn_edita2',function(event) {
          hash=$(this).attr("data-hash");
-         $(".btn_ingresa_cpp").html('<i class="fa fa-edit" ></i> Modificar');
+         $(".btn_ingresa_act").html('<i class="fa fa-edit" ></i> Modificar');
          $('#formActividad')[0].reset();
          $("#id_actividad").val("");
-         $('#modal_cpp').modal("toggle");
-         $(".cierra_mod_cpp").prop("disabled", false);
+         $('#modal_act').modal("toggle");
+         $(".cierra_mod_act").prop("disabled", false);
          $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", false);
 
           $.ajax({
@@ -197,8 +196,9 @@
             data:{hash:hash},
             dataType:"json",
             beforeSend:function(){
-             /*$(".btn_ingresa_cpp").prop("disabled",true); 
-             $(".cierra_mod_cpp").prop("disabled",true); */
+             $(".btn_ingresa_act").prop("disabled",true); 
+             $(".cierra_mod_act").prop("disabled",true); 
+             $("#formActividad input,#formActividad select,#formActividad button,#formActividad").prop("disabled", true);
             },
             success: function (data) {
               if(data.res=="ok"){
@@ -214,19 +214,19 @@
                     $("#valor").val(data.datos[dato].valor);
                     $("#porcentaje").val(data.datos[dato].porcentaje);
                     $("#proyecto_empresa option[value='"+data.datos[dato].id_proyecto_empresa+"'").prop("selected", true);
-                    $("#proyecto_tipo option[value='"+data.datos[dato].id_proyecto_tipo+"'").prop("selected", true);
+                    $("#proyecto_tipo_act option[value='"+data.datos[dato].id_proyecto_tipo+"'").prop("selected", true);
                     
                     setTimeout( function () {
                        $.getJSON('getTiposPorPe', {pe: id_proyecto_empresa}, 
                         function(response) {
-                            $("#proyecto_tipo").select2({
+                            $("#proyecto_tipo_act").select2({
                                allowClear: true,
                                placeholder: 'Buscar...',
                                data: response
                             });
                       });
                     
-                    $('#proyecto_tipo').val(id_proyecto_tipo).trigger('change');
+                    $('#proyecto_tipo_act').val(id_proyecto_tipo).trigger('change');
 
                     },1000);
                 }
@@ -248,7 +248,7 @@
                         className:'warn',
                         globalPosition: 'top right'
                       });     
-                      $('#modal_cpp').modal("toggle");
+                      $('#modal_act').modal("toggle");
                   }    
                   return;
               }
@@ -258,14 +258,14 @@
                     className:'warn',
                     globalPosition: 'top right'
                   });
-                  $('#modal_cpp').modal("toggle");
+                  $('#modal_act').modal("toggle");
               }
           },timeout:5000
         }); 
 
       });
 
-      $(document).off('click', '.btn_elimina').on('click', '.btn_elimina',function(event) {
+      /*$(document).off('click', '.btn_elimina').on('click', '.btn_elimina',function(event) {
         hash=$(this).attr("data-hash");
         if(confirm("¿Esta seguro que desea eliminar este registro?")){
             $.post('deleteActividad'+"?"+$.now(),{"hash": hash}, function(data) {
@@ -274,7 +274,7 @@
                   className:'success',
                   globalPosition: 'top right'
                 });
-                table_cpp.ajax.reload();
+                table_act.ajax.reload();
               }else{
                 $.notify(data.msg, {
                   className:'danger',
@@ -283,22 +283,44 @@
               }
             },"json");
           }
-      });
+      });*/
 
 
        $(document).off('change', '#proyecto_empresa').on('change', '#proyecto_empresa', function(event) {
         event.preventDefault();
         pe=$("#proyecto_empresa").val();
-        $('#proyecto_tipo').html('').select2({data: [{id: '', text: ''}]});
+        $('#proyecto_tipo_act').html('').select2({data: [{id: '', text: ''}]});
         $.getJSON('getTiposPorPe', {pe: pe}, 
          function(response) {
-            $("#proyecto_tipo").select2({
+            $("#proyecto_tipo_act").select2({
              allowClear: true,
              placeholder: 'Buscar...',
              data: response
             });
        });
       });
+
+      /*$(document).on('keyup', '#porcentaje', function(event) {
+          event.preventDefault();
+           var num = $("#porcentaje").val();
+          
+            if(num <= 0 || num > 100){
+              $("#porcentaje").css("border-color", "red");
+            }
+            else{
+              $("#porcentaje").css("border-color", "");
+            }
+        });*/
+
+      /*$(".validRange").onclick(function(event){
+        event.preventDefault();
+           var num = $("#porcentaje").val();
+          
+            if(num <= 0 || num > 100){
+              alert("porcentaje debe ser entre 1 y 100");
+            }
+            
+      });*/
 
       
    /********OTROS**********/
@@ -355,7 +377,7 @@
   <div class="form-row">
     <div class="col-6 col-lg-2">
          <div class="form-group"> 
-         <button type="button" class="btn-block btn btn-sm btn-sm btn-outline-primary btn_cpp">
+         <button type="button" class="btn-block btn btn-sm btn-sm btn-outline-primary btn_act">
          <i class="fa fa-plus-circle"></i> Nuevo 
          </button>
          </div>
@@ -364,7 +386,7 @@
     <div class="col-lg-3">  
       <div class="form-group">
           <select id="empresa" name="empresa" class="custom-select custom-select-sm">
-            <option selected value="">Seleccione Proyecto Empresa</option>
+            <option selected value="">Proyecto empresa | Todos</option>
             <?php  
               foreach($proyecto_empresa as $p){
             ?>
@@ -378,13 +400,13 @@
 
     <div class="col-lg-5">
        <div class="form-group">
-        <input type="text" placeholder="Ingrese su busqueda..." id="buscador_inf" class="buscador_inf form-control form-control-sm">
+        <input type="text" placeholder="Ingrese su busqueda..." id="buscador_act" class="buscador_act form-control form-control-sm">
        </div>
     </div>
 
     <div class="col-6 col-lg-1">
        <div class="form-group">
-         <button type="button" class="btn-block btn btn-sm btn-outline-primary btn-primary btn_filtra_cpp">
+         <button type="button" class="btn-block btn btn-sm btn-outline-primary btn-primary btn_filtra_act">
          <i class="fa fa-cog fa-1x"></i><span class="sr-only"></span> Filtrar
          </button>
        </div>
@@ -403,7 +425,7 @@
 
 <div class="row">
     <div class="col">
-        <table id="tabla_cpp" class="table table-hover table-bordered dt-responsive nowrap" style="width:100%">
+        <table id="tabla_act" class="table table-hover table-bordered dt-responsive nowrap" style="width:100%">
             <thead>
                 <tr>
                     <th style="width:80px;">Acciones</th>
@@ -421,7 +443,7 @@
 <!-- FORMULARIOS-->
   
   <!--  NUEVO INFORME-->
-<div id="modal_cpp"  class="modal fade bd-example-modal-lg" data-backdrop="static"   aria-labelledby="myModalLabel" role="dialog">
+<div id="modal_act"  class="modal fade bd-example-modal-lg" data-backdrop="static"   aria-labelledby="myModalLabel" role="dialog">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <?php echo form_open_multipart("formActividad",array("id"=>"formActividad","class"=>"formActividad"))?>
@@ -451,7 +473,7 @@
                       <div class="col-lg-3">  
                         <div class="form-group">
                          <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Proyecto Tipo</label>
-                            <select id="proyecto_tipo" name="proyecto_tipo" class="custom-select custom-select-sm"  style="width:100%!important;">
+                            <select id="proyecto_tipo_act" name="proyecto_tipo" class="custom-select custom-select-sm"  style="width:100%!important;">
                             <option selected value="">Seleccione Tipo Proyecto </option>
                             </select>
                         </div>
@@ -481,7 +503,7 @@
                       <div class="col-lg-3">  
                       <div class="form-group">
                       <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Porcentaje</label>
-                          <input type="number" min="0" max="100" autocomplete="off" placeholder="Ingrese Porcentaje" class="form-control form-control-sm"  name="porcentaje" id="porcentaje">
+                          <input type="text" minlength="1" maxlength="3" autocomplete="off" placeholder="Ingrese Porcentaje" class="inttext form-control form-control-sm"  name="porcentaje" id="porcentaje" onsubmit="return validarRango(this);">
                       </div>
                       </div> 
                     </div>
@@ -493,7 +515,7 @@
                   <div class="form-row">
                     <div class="col-6 col-lg-6">
                       <div class="form-group">
-                        <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresa_cpp">
+                        <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresa_act">
                          <i class="fa fa-save"></i> Guardar
                         </button>
                       </div>
