@@ -222,7 +222,7 @@
           var table_cpp = $.fn.dataTable.fnTables(true);
           if ( table_cpp.length > 0 ) {
               $(table_cpp).dataTable().fnAdjustColumnSizing();
-        }}, 100 ); 
+        }}, 1000 ); 
 
         $(document).off('click', '.btn_filtra_cpp').on('click', '.btn_filtra_cpp',function(event) {
           event.preventDefault();
@@ -851,7 +851,7 @@
                       <div class="col-lg-6">  
                         <div class="form-group">
                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Comentarios</label>
-                            <input type="text" autocomplete="off" placeholder="Ingrese Comentarios" class="form-control form-control-sm"  name="comentarios" id="comentarios">
+                            <input type="text" autocomplete="off" maxlength="200" placeholder="Ingrese Comentarios" class="form-control form-control-sm"  name="comentarios" id="comentarios">
                         </div>
                       </div> 
 

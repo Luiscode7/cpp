@@ -376,9 +376,9 @@
         </div>
     </div>
 
-    <div class="col-lg-3">
+    <div class="col-lg-5">
        <div class="form-group">
-        <input type="text" placeholder="Ingrese Su Busqueda..." id="buscador_inf" class="buscador_inf form-control form-control-sm">
+        <input type="text" placeholder="Ingrese su busqueda..." id="buscador_inf" class="buscador_inf form-control form-control-sm">
        </div>
     </div>
 
