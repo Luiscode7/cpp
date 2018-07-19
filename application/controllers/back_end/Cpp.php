@@ -11,6 +11,13 @@ class CPP extends CI_Controller {
 		
 	}
 
+	public function checkLogin(){
+		if($this->session->userdata('idUsuarioCPP')==""){
+			echo json_encode(array('res'=>"sess"));exit;
+		}
+	}
+
+
 	public function visitas(){
 		$data=array("usuario"=>$this->session->userdata('nombresUsuarioCPP')." ".$this->session->userdata('apellidosUsuarioCPP'),
      	"fecha"=>date("Y-m-d G:i:s"),
@@ -68,6 +75,7 @@ class CPP extends CI_Controller {
 		public function formCPP(){
 			sleep(1);
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$id_cpp=$this->security->xss_clean(strip_tags($this->input->post("id_cpp")));
 				$actividad=$this->security->xss_clean(strip_tags($this->input->post("actividad")));
 				$ejecutor=$this->security->xss_clean(strip_tags($this->input->post("ejecutor")));
@@ -159,6 +167,7 @@ class CPP extends CI_Controller {
 
 		public function getDataAct(){
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 				$data=$this->CPPmodel->getDataAct($hash);
 				if($data){
@@ -172,6 +181,7 @@ class CPP extends CI_Controller {
 		}
 
 		public function eliminaActividad(){
+			$this->checkLogin();
 			$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 		    if($this->CPPmodel->eliminaActividad($hash)){
 		      echo json_encode(array("res" => "ok" , "msg" => "Registro eliminado correctamente."));
@@ -189,8 +199,6 @@ class CPP extends CI_Controller {
 		      echo json_encode(array("res" => "error" , "msg" => "Problemas cargando la unidad de medida, intente nuevamente."));
 		    }
 		}
-
-
 
 		public function excelTareas(){
 			$desde=$this->uri->segment(2);
@@ -272,11 +280,110 @@ class CPP extends CI_Controller {
 
 		public function getVistaMensualView(){
 	    	$fecha_hoy=date('Y-m-d');
+	    	$desde=date('Y-m');
+	    	$hasta=date('Y-m');
 		    $datos = array(
-		       'fecha_hoy' => $fecha_hoy
+		       'fecha_hoy' => $fecha_hoy,
+		       'desde' => $desde,
+		       'hasta' => $hasta
 			);  
 			$this->load->view('back_end/cpp/vista_mensual',$datos);
 		}
+
+		public function listaMes(){
+			$desde=$this->security->xss_clean(strip_tags($this->input->get_post("desde")));
+			$hasta=$this->security->xss_clean(strip_tags($this->input->get_post("hasta")));
+			if($desde!=""){$desde=$desde."-01";}else{$desde="";}	
+		    if($hasta!=""){$hasta=$hasta."-31";}else{$hasta="";}	
+		    if($this->session->userdata('id_perfil_CPP')==4){
+		    	$usuario=$this->session->userdata('idUsuarioCPP');
+		    }else{
+		  		$usuario=$this->security->xss_clean(strip_tags($this->input->get_post("usuario")));
+		    }
+			echo json_encode($this->CPPmodel->listaMes($desde,$hasta,$usuario));
+		}
+
+		public function excelMensual(){
+			$desde=$this->uri->segment(2);
+			$hasta=$this->uri->segment(3);	
+			$usuario=$this->uri->segment(4);	
+			if($desde!=""){$desde=$desde."-01";}else{$desde="";}	
+		    if($hasta!=""){$hasta=$hasta."-31";}else{$hasta="";}	
+		   
+		    if($this->session->userdata('id_perfil_CPP')==4){
+		    	$usuario=$this->session->userdata('idUsuarioCPP');
+		    }else{
+		  		$usuario=$usuario;
+		    }
+		   
+		    $nombre_us=strtolower(url_title(convert_accented_characters($this->CPPmodel->getNombrePorId($usuario)),'-',TRUE));
+	    	$nombre="reporte-tareas-".$nombre_us."-".date("d-m-Y",strtotime($desde))."-".date("d-m-Y",strtotime($hasta)).".xls";
+			header("Content-type: application/vnd.ms-excel;  charset=utf-8");
+			header("Content-Disposition: attachment; filename=$nombre");
+			?>
+			<style type="text/css">
+				.head{font-size:13px;height: 30px; background-color:#1D7189;color:#fff; font-weight:bold;padding:10px;margin:10px;vertical-align:middle;}
+				td{font-size:12px;text-align:center;   vertical-align:middle;}
+			</style>
+		    <h3>Detalle de tareas</h3>
+		        <table align='center' border="1"> 
+			        <thead>
+			        <tr style="background-color:#F9F9F9">
+			          <th>D&iacute;a</th>
+			          <th>Fecha</th>
+			          <th>ID CPP</th>  
+			          <th>Proyecto Empresa</th>  
+			          <th>Actividad</th>  
+			          <th>Unidad</th>  
+			          <th>Cantidad</th>  
+			          <th>Proyecto ID/Descripci&oacute;n</th>  
+			          <th>Comentario</th>  
+			          <th>Estado</th>  
+			          <th>Fecha Inicio</th>  
+			          <th>Hora Inicio</th>  
+			          <th>Fecha T&eacute;rmino</th>  
+			          <th>Hora T&eacute;rmino</th>  
+			          <th>Fecha Aprobaci&oacute;n</th>  
+			          <th>Hora Digitaci&oacute;n</th>  
+			          <th>Fecha Digitaci&oacute;n</th>  
+			          <th>&Uacute;ltima actualizaci&oacute;n</th>  
+			        </tr>
+			        </thead>	
+					<tbody>
+			        <?php 
+			        $detalle=$this->CPPmodel->listaMes($desde,$hasta,$usuario);
+			        	if($detalle !=FALSE){
+			      		foreach($detalle as $det){
+			      			?>
+			      			 <tr>
+								 <td><?php echo utf8_decode($det["dia"]); ?></td>
+								 <td><?php echo utf8_decode($det["fecha_termino"]); ?></td>
+								 <td><?php echo utf8_decode($det["id"]); ?></td>
+								 <td><?php echo utf8_decode($det["proyecto_empresa"]); ?></td>
+								 <td><?php echo utf8_decode($det["actividad"]); ?></td>
+								 <td><?php echo utf8_decode($det["unidad"]); ?></td>
+								 <td><?php echo utf8_decode($det["cantidad"]); ?></td>
+								 <td><?php echo utf8_decode($det["proyecto_desc"]); ?></td>
+								 <td><?php echo utf8_decode($det["comentarios"]); ?></td>
+								 <td><?php echo utf8_decode($det["estado_str"]); ?></td>
+								 <td><?php echo utf8_decode($det["fecha_inicio"]); ?></td>
+								 <td><?php echo utf8_decode(substr($det["hora_inicio"], 0, -2)); ?></td>
+								 <td><?php echo utf8_decode($det["fecha_termino"]); ?></td>
+								 <td><?php echo utf8_decode(substr($det["hora_termino"], 0, -2)); ?></td>
+								 <td><?php echo utf8_decode($det["fecha_aprob"]); ?></td>
+								 <td><?php echo utf8_decode(substr($det["hora_aprob"], 0, -2)); ?></td>
+								 <td><?php echo utf8_decode($det["fecha_dig"]); ?></td>
+								 <td><?php echo utf8_decode($det["ultima_actualizacion"]); ?></td>
+							 </tr>
+			      			<?php
+			      		}
+			      		}
+			          ?>
+			        </tbody>
+		        </table>
+		    <?php
+		}
+
 
 	/********MANTENEDOR ACTIVIDADES*********/
 
@@ -345,6 +452,7 @@ class CPP extends CI_Controller {
 
 		public function getDataActividad(){
 			if($this->input->is_ajax_request()){
+				sleep(1);
 				$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 				$data=$this->CPPmodel->getDataActividad($hash);
 				if($data){
@@ -419,9 +527,9 @@ class CPP extends CI_Controller {
 	          ?>
 	        </tbody>
         </table>
-    <?php
+	    <?php
 
-	}
+		}
 
 
 	/********MANTENEDOR USUARIOS *********/
@@ -452,6 +560,7 @@ class CPP extends CI_Controller {
 
 		public function formMantUs(){
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$id_mant_us=$this->security->xss_clean(strip_tags($this->input->post("id_mant_us")));
 				$usuario=$this->security->xss_clean(strip_tags($this->input->post("usuario")));
 				$perfil=$this->security->xss_clean(strip_tags($this->input->post("perfil")));
@@ -518,6 +627,7 @@ class CPP extends CI_Controller {
 
 		public function getDataMantUs(){
 			if($this->input->is_ajax_request()){
+				$this->checkLogin();
 				$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 				$data=$this->CPPmodel->getDataMantUs($hash);
 				if($data){
@@ -531,6 +641,7 @@ class CPP extends CI_Controller {
 		}
 
 		public function eliminaUsuario(){
+			$this->checkLogin();
 			$hash=$this->security->xss_clean(strip_tags($this->input->post("hash")));
 		    if($this->CPPmodel->eliminaUsuario($hash)){
 		      echo json_encode(array("res" => "ok" , "msg" => "Registro eliminado correctamente."));

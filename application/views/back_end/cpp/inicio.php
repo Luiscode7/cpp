@@ -34,12 +34,17 @@
       var perfil="<?php echo $this->session->userdata("id_perfil_CPP"); ?>";
       
       function inicio(perfil){
-        if(perfil==4){
+        if(perfil==1){
+          $("#menu_usuarios").show();
+          $("#menu_mantenedor_actividades").show();
+          
+        }else{
           $("#menu_usuarios").hide();
+          $("#menu_mantenedor_actividades").hide();
         }
       }
+
       inicio(perfil);
-      
       $(".nav-tabs-int").addClass('disabled');
       $("#menu_detalle_diario a").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Detalle de actividades diarias');
       $(".contenedor_produccion").html("<center><img src='<?php echo base_url()?>assets/imagenes/loader2.gif' class='loader'></center>");
@@ -54,8 +59,8 @@
         $(".nav-tabs-int").removeClass('disabled');
         $("#menu_detalle_diario a").html('<i class="fa fa-list-ul"></i> Detalle de actividades diarias');
       });
-      
 
+       
       $(document).off('click', '#menu_detalle_diario').on('click', '#menu_detalle_diario',function(event) {
         event.preventDefault();
         $(".nav-tabs-int").addClass('disabled');
@@ -89,7 +94,7 @@
         $.get("getVistaMensualView", function( data ) {
           $(".contenedor_produccion").html(data);    
           $(".nav-tabs-int").removeClass('disabled');
-          $("#menu_vista_mensual a").html('<i class="fa fa-list-ul"></i> Vista mensual');
+          $("#menu_vista_mensual a").html('<i class="fa fa-calendar"></i> Vista mensual');
         });
 
        });
@@ -108,7 +113,7 @@
         $.get("getMantActView", function( data ) {
           $(".contenedor_produccion").html(data);    
           $(".nav-tabs-int").removeClass('disabled');
-          $("#menu_mantenedor_actividades a").html('<i class="fa fa-list-ul"></i> Mantenedor actividades');
+          $("#menu_mantenedor_actividades a").html('<i class="fa fa-th-list"></i> Mantenedor actividades');
         });
 
        });
@@ -141,8 +146,8 @@
     <div class="col-12"> 
        <ul class="nav nav-tabs navbar-left nav-tabs-int">
         <li id="menu_detalle_diario" class="active"><a><i class="fa fa-list-ul"></i> Detalle de actividades diarias</a></li>   
-        <!-- <li id="menu_vista_mensual" class="active"><a><i class="fa fa-list-ul"></i> Vista mensual</a></li>-->   
-        <li id="menu_mantenedor_actividades" class="active"><a><i class="fa fa-list-ul"></i> Mantenedor actividades</a></li>    
+         <li id="menu_vista_mensual" class="active"><a><i class="fa fa-calendar"></i> Vista mensual</a></li>   
+        <li id="menu_mantenedor_actividades" class="active"><a><i class="fa fa-th-list"></i> Mantenedor actividades</a></li>    
         <li id="menu_usuarios" class="active"><a><i class="fa fa-user"></i> Mantenedor Usuarios</a></li>   
       </ul>  
     </div> 

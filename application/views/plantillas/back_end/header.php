@@ -9,7 +9,17 @@
     </div>
 </noscript>
 <title><?php echo $titulo?></title>
-<link rel="icon" href="<?php echo base_url(); ?>assets/imagenes/logo_splice22.png">
+<?php 
+    if($this->session->userdata('empresaCPP')=="km"){
+      ?>
+       <link rel="icon" href="<?php echo base_url(); ?>assets/imagenes/favicon_km3.png">
+      <?php
+    }elseif ($this->session->userdata('empresaCPP')=="splice") {
+      ?>
+      <link rel="icon" href="<?php echo base_url(); ?>assets/imagenes/logo_splice22.png">
+      <?php
+    }
+  ?>
 <script src="<?php echo base_url();?>assets/back_end/js/jquery.min.js" charset="UTF-8"></script>
 <script src="<?php echo base_url();?>assets/back_end/js/loader.js" charset="UTF-8"></script>
 <link rel="stylesheet" href="<?php echo base_url();?>assets/back_end/css/loader.css" >
@@ -35,6 +45,7 @@
   <?php 
   $n=explode(" ",$this->session->userdata("nombresUsuarioCPP"));
   $empresa=$this->session->userdata("empresaCPP");
+
   ?>
   
   <nav class="navbar navbar-expand-lg navbar-dark bg-light fixed-top nav-tabs-main">

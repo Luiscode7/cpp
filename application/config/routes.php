@@ -27,6 +27,8 @@ $route[''] = "inicio/index";
 
 /****** VISTA MENSUAL*******/
 	$route['getVistaMensualView'] = "back_end/cpp/getVistaMensualView";
+	$route['listaMes'] = "back_end/cpp/listaMes";
+	$route['excelMensual/(:any)/(:any)/(:any)'] = "back_end/cpp/excelMensual/$1/$2/$3";
 
 
 /****** MANTENEDOR ACTIVIDADES ******/
