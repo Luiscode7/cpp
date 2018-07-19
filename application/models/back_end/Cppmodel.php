@@ -437,15 +437,6 @@ class CPPmodel extends CI_Model {
 		}
 
 
-	public function checkActividad($id){
-		$this->db->where('actividad', $id);
-		$res=$this->db->get('cpp_actividades');
-		if($res->num_rows()>0){
-			return TRUE;
-		}
-		return FALSE;
-	}
-
 
 	/***********MANTENEDOR USUARIOS**********/
 
