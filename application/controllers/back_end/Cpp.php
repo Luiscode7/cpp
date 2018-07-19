@@ -393,6 +393,7 @@ class CPP extends CI_Controller {
 	        <thead>
 	        <tr style="background-color:#F9F9F9">
 	              <th class="head">Proyecto Empresa</th>
+				  <th class="head">Proyecto Tipo</th>
                   <th class="head">Actividad</th>
                   <th class="head">Unidad</th>
                   <th class="head">Valor</th>
@@ -406,6 +407,7 @@ class CPP extends CI_Controller {
 	      			?>
 	      			 <tr>
 						 <td><?php echo utf8_decode($sop["proyecto"]); ?></td>
+						 <td><?php echo utf8_decode($sop["proyecto_tipo"]); ?></td>
 						 <td><?php echo utf8_decode($sop["actividad"]); ?></td>
 						 <td><?php echo utf8_decode($sop["unidad"]); ?></td>
 						 <td><?php echo utf8_decode($sop["valor"]); ?></td>

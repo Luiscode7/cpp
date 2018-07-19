@@ -72,6 +72,7 @@
           },
           
           { "data": "proyecto" ,"class":"margen-td "},
+          { "data": "proyecto_tipo" ,"class":"margen-td "},
           { "data": "actividad" ,"class":"margen-td "},
           { "data": "unidad" ,"class":"margen-td "},
           { "data": "valor" ,"class":"margen-td "},    
@@ -430,6 +431,7 @@
                 <tr>
                     <th style="width:80px;">Acciones</th>
                     <th>Proyecto Empresa</th>
+                    <th>Proyecto Tipo</th>
                     <th>Actividad</th>  
                     <th>Unidad</th>  
                     <th>Valor</th>  

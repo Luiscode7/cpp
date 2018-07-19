@@ -49,10 +49,16 @@
     margin-top:10px;
     margin-bottom: 10px;
   }
+
+*{
+  margin:0;
+  padding:0;
+}
+
 </style>
 <script type="text/javascript">
   $(function(){
-    
+  
     function detectBrowser(){
       if (/MSIE 10/i.test(navigator.userAgent)) {
          // This is internet explorer 10
@@ -73,7 +79,7 @@
       return true;
     }
 
-
+    
     $(document).on('submit', '#formlog', function(event) {
        if(detectBrowser()){
         var formElement = document.querySelector("#formlog");
@@ -123,6 +129,43 @@
         }
       });
 
+      $('#recuperarpass').submit(function(){
+        $('#modal1').modal("toggle"); 
+        var formElement = document.querySelector("#recuperarpass");
+        var formData = new FormData(formElement);
+        $.ajax({
+          url: $('.recuperarpass').attr('action')+"?"+$.now(),  
+          type: 'POST',
+          data: formData,
+          cache: false,
+          processData: false,
+          dataType: "json",
+          contentType : false,
+          success: function (data) {
+       
+          if(data.res == 1){    
+              $(".validacion-rut").hide();       
+              $(".validacion-rut").html("<div class='row'><div class='card-panel white-text teal lighten-2'><center>Nueva contrase&ntilde;a enviada a su correo.</center></div></div>");
+              $(".validacion-rut").fadeIn(1000);
+                //setTimeout(function(){window.location='<?php echo base_url()?>inicio'} , 4000); 
+          }else if(data.res == 2){
+              $(".validacion-rut").hide();
+              $(".validacion-rut").html("<div class='row'><div class='card-panel white-text red darken-3'><center><blockquote>El rut ingresado no esta registrado en la base de datos.</blockquote></center></div></div>");
+              $(".validacion-rut").fadeIn(1000);
+          }else if(data.res == 3){
+              $(".validacion-rut").hide();
+              $(".validacion-rut").html("<div class='row'><div class='card-panel white-text red darken-3'><center><blockquote>Error, Intente nuevamente.</blockquote></center></div></div>");
+              $(".validacion-rut").fadeIn(1000);
+          }
+        }
+       
+    });
+      return false;     
+});
+
+$(".usuario").keyup(function(event) {
+    $(".rut").attr("value",$(this).val());
+  });
 
   });
 </script>
@@ -160,7 +203,7 @@
                   <div class="form-group">
                     <label class="sr-only" for="form-username">Rut</label>
                       <input type="text" name="usuario" id="usuario" placeholder="Rut..." class="form-username form-control" >
-                    </div>
+                  </div>
                     <div class="form-group">
                       <label class="sr-only" for="form-password">Contrase&ntilde;a</label>
                       <input type="password" name="pass" id="pass" placeholder="Contrase&ntilde;a..." class="form-password form-control">
@@ -168,15 +211,68 @@
                     <div class="btn_submit">
                       <button type="submit" class="btn_submit_b btn btn-primary" style="background-color: #1E748D">Ingresar</button>
                     </div>
+                    <center>
+                      <div class="input-field col s10 offset-s1">
+                        <a href="#modal1" id="recupera_pass" style="font-size:12px;" data-toggle="modal" data-target="#modal1" class="modal-trigger">
+                          ¿ Olvid&oacute; su contrase&ntilde;a ?
+                        </a>  
+                      </div>
+                    </center>
                    <?php echo form_close();?>
                   </div>
 
               </div>
           </div>
-        </div>
     </div>
-  </div>
 
+  <div class="container">
+    <div id="modal1"  class="modal fade" data-backdrop="false" aria-labelledby="myModalLabel" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+          <?php echo form_open('recuperarpass', array('id'=>'recuperarpass','class'=>'recuperarpass')); ?>
+           
+               <button type="button" title="Cerrar Ventana" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+               <fieldset class="form-ing-cont">
+                <legend class="form-ing-border">Recuperaci&oacute;n de Contrase&ntilde;a</legend>
+                     
+                    <div class="form-row">
+                      <div class="col-lg-12">  
+                        <div class="form-group">
+                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm"></label>
+                            <input type="text" autocomplete="off" placeholder="" class="form-control form-control-sm"  name="rut" id="rut">
+                        </div>
+                      </div>  
+                    </div>
+                   
+                </fieldset>
+
+                <br>
+              <div class="row justify-content-center">
+                <div class="col-lg-6">
+                  <div class="form-row">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresa_cpp">
+                        <i class="fas fa-chevron-circle-right"></i> Enviar
+                        </button>
+                      </div>
+                  </div>
+
+                    <div class="col-lg-6">
+                      <button class="btn-block btn btn-sm btn-dark cierra_mod_inf" data-dismiss="modal" aria-hidden="true">
+                       <i class="fa fa-window-close"></i> Cerrar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                </div>
+
+               </div>
+             <?php echo form_close(); ?>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
 </body>

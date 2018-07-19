@@ -101,6 +101,26 @@ class InicioModel extends CI_Model {
 		}
 	}
 
+	public function recuperarpass($rut,$data){
+		$this->db->where('rut', $rut);
+	    if($this->db->update('usuario', $data)){
+	    	return TRUE;
+	    }else{
+	    	return FALSE;
+	    }
+	}
+
+	public function getCorreo($r){
+		$this->db->select("correo");
+		$this->db->where("rut",$r);
+		$this->db->where("estado","Activo");
+		$res=$this->db->get("usuario");
+		foreach($res->result_array() as $row){
+			return $row["correo"];
+		}
+	}
+
+
 }
 
 /* End of file homeModel.php */

@@ -309,7 +309,7 @@ class CPPmodel extends CI_Model {
 
 	public function listaActividad($empresa){
 		$this->db->select("SHA1(a.id) as 'hash_id', a.id as id, pe.proyecto_empresa as proyecto,
-		 pe.id as id_proyecto_empresa, a.id_proyecto_tipo as proyecto_tipo,
+		 pe.id as id_proyecto_empresa, a.id_proyecto_tipo as proyecto_tipo_id, pt.tipo as proyecto_tipo,
 		 a.actividad as actividad, a.unidad as unidad, a.valor as valor, a.porcentaje as porcentaje");
 		$this->db->from('cpp_actividades as a');
 		$this->db->join('cpp_proyecto_tipo as pt', 'pt.id = a.id_proyecto_tipo');

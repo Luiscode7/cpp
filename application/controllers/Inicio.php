@@ -78,5 +78,36 @@ class Inicio extends CI_Controller {
 		redirect("");
 	}
 
+	public function recuperarpass(){
+		$rut=$this->security->xss_clean(strip_tags($this->input->post("rut")));
+		if($this->Iniciomodel->getCorreo($rut)){
+		$min=1000; $max=9999;
+   
+			$correo=$this->Iniciomodel->getCorreo($rut);
+			$pass=rand($min,$max);
+			$data=array("contrasena"=>sha1($pass));
+				if($this->Iniciomodel->recuperarpass($rut,$data)){
+					$this->load->library('email');
+
+					$this->email->from('no-reply@km-telecomunicaciones.cl', 'km-telecomunicaciones');
+					$this->email->to($correo);
+					//$this->email->cc('ricardo.hernandez.esp@gmail.com');
+					$this->email->subject('Contraseña solicitada Web KM');
+					$this->email->message("Nueva contraseña : ".$pass);
+					$this->email->send();
+					echo json_encode(array("res" => 1));//ok
+					exit;
+
+				}else{
+					echo json_encode(array("res" => 3));// problemas actualizando contrasena
+					exit;
+				}
+		}else{
+			echo json_encode(array("res" => 2));// correo no encontrado
+			exit;
+		}
+	}
+
+
 	
 }
