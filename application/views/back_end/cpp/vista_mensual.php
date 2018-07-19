@@ -17,35 +17,32 @@
     var desde="<?php echo $desde; ?>";
     var hasta="<?php echo $hasta; ?>";
     $("#desdef").val(desde);
-    $("#hastaf").val(hasta);   
+   /* $("#hastaf").val(hasta);  */ 
     iniciaEjecutor();
 
     function iniciaEjecutor(){
-        if(id_perfil_CPP==4){
-          
+        if(id_perfil_CPP==1 || id_perfil_CPP==2){//ADMIN,GERENTES
+          accion = 1;//TODO
+        }
+        if(id_perfil_CPP==3){//SUPERVISOR
+          accion = 2;//SU PERSONAL
+        }
+        if(id_perfil_CPP==4){//EJECUTOR
+          accion = 3;//SUS REGISTROS
+        }
 
-          $.getJSON("getUsuariosSel2CPP",{idUsuarioCPP:idUsuarioCPP}, function(data) {
-                response = data;
-            }).done(function() {
-              $("#select_usuario_vm").select2({
-                   placeholder: '',
+        $.getJSON('getUsuariosSel2CPP', {accion:accion}, 
+            function(response) {
+                $("#select_usuario_vm").select2({
+                   allowClear: true,
+                   placeholder: 'Seleccione usuario | Todos',
                    data: response
-                  });
-               $('#select_usuario_vm').val(idUsuarioCPP).trigger('change'); 
-            }); 
-         
-          }else{
+            });
+        });
 
-            $.getJSON("getUsuariosSel2CPP", function(data) {
-                response = data;
-            }).done(function() {
-              $("#select_usuario_vm").select2({
-                   placeholder: '',
-                   data: response
-                  });
-             $('#select_usuario_vm').val(idUsuarioCPP).trigger('change'); 
-            });  
-          }
+        setTimeout( function () {
+         /*$('#select_usuario_vm').val(idUsuarioCPP).trigger('change'); */
+        }, 2000 );  
       }
 
       $.extend(true,$.fn.dataTable.defaults,{
@@ -70,7 +67,7 @@
       /****GRILLA****/
        var table_vm = $('#tabla_vm').DataTable({
         "iDisplayLength":50, 
-        "aaSorting" : [[1,'asc']],
+        "aaSorting" : [[2,'desc']],
         "scrollY": 420,
         "scrollX": true,
         "select": true,
@@ -80,16 +77,27 @@
                 $(".btn_filtra_vm").html('<i class="fa fa-cog fa-1x"></i><span class="sr-only"></span> Filtrar');
                 $(".btn_filtra_vm").prop("disabled" , false);
                 desde = $("#desdef").val();
-                hasta = $("#hastaf").val();
+                /*hasta = $("#hastaf").val();*/
                 return json;
             },       
             data: function(param){
                 param.desde = $("#desdef").val();
-                param.hasta = $("#hastaf").val();
+                /* param.hasta = $("#hastaf").val();*/
+                if(id_perfil_CPP==1 || id_perfil_CPP==2){//ADMIN,GERENTES
+                  accion = 1;//TODO
+                }
+                if(id_perfil_CPP==3){//SUPERVISOR
+                  accion = 2;//SU PERSONAL
+                }
+                if(id_perfil_CPP==4){//EJECUTOR
+                  accion = 3;//SUS REGISTROS
+                }
+                param.accion = accion;
                 param.usuario = $("#select_usuario_vm").val();
             }
          },    
          "columns": [
+            { "data": "ejecutor" ,"class":"margen-td"},
             { "data": "dia" ,"class":"margen-td"},
             { "data": "fecha_termino" ,"class":"margen-td"},
             { "data": "id" ,"class":"margen-td"},
@@ -156,14 +164,14 @@
           event.preventDefault();
 
           var us = $("#select_usuario_vm").val();
-            if(us==""){
+          /* if(us==""){
              $.notify("Debe seleccionar un usuario", {
                  className:'error',
                  globalPosition: 'top right'
              });  
              return false;
           }
-
+          */
            $(this).prop("disabled" , true);
            $(".btn_filtra_vm").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Filtrando');
            table_vm.ajax.reload();
@@ -195,32 +203,38 @@
 
         $(document).off('click', '.btn_excel_vm').on('click', '.btn_excel_vm',function(event) {
            event.preventDefault();
-           var desde = $("#desdef").val();
-           var hasta = $("#hastaf").val();
-           var us = $("#select_usuario_vm").val();
-           if(desde==""){
+            var fecha = $("#desdef").val();
+            var hasta = $("#hastaf").val();
+            var us = $("#select_usuario_vm").val();
+            
+            if(us==""){
+              us="-";
+            }else{
+              us=us;
+            }
+
+            if(fecha==""){
              $.notify("Debe seleccionar una fecha de inicio.", {
                  className:'error',
                  globalPosition: 'top right'
              });  
              return false;
-           }
-           if(hasta==""){
-             $.notify("Debe seleccionar una fecha de término.", {
-                 className:'error',
-                 globalPosition: 'top right'
-             });  
-            return false;
-           }
-           if(us==""){
-             $.notify("Debe seleccionar un usuario", {
-                 className:'error',
-                 globalPosition: 'top right'
-             });  
-             return false;
-           }
-           
-           window.location="excelMensual/"+desde+"/"+hasta+"/"+us;
+            }
+
+
+            if(id_perfil_CPP==1 || id_perfil_CPP==2){//ADMIN,GERENTES
+              accion = 1;//TODO
+            }
+
+            if(id_perfil_CPP==3){//SUPERVISOR
+              accion = 2;//SU PERSONAL
+            }
+
+            if(id_perfil_CPP==4){//EJECUTOR
+              accion = 3;//SUS REGISTROS
+            }
+
+           window.location="excelMensual/"+fecha+"/"+us+"/"+accion;
 
         });
 
@@ -240,24 +254,24 @@
      <div class="col-lg-3">  
       <div class="form-group">
           <select id="select_usuario_vm" name="ejecutor" class="custom-select custom-select-sm"  style="width:100%!important;">
-          <option value=""></option>
+          <option value="">Seleccione usuario | Todos</option>
           </select>
       </div>
     </div> 
 
-    <div class="col-lg-3">
+    <div class="col-lg-2">
       <div class="form-group">
       <div class="input-group">
         <div class="input-group-prepend">
           <span class="input-group-text" id=""><i class="fa fa-calendar-alt"></i></span>
         </div>
           <input type="text" autocomplete="off" placeholder="Desde" class="fecha_mes form-control form-control-sm"  name="desdef" id="desdef">
-          <input type="text" autocomplete="off" placeholder="Hasta" class="fecha_mes form-control form-control-sm"  name="hastaf" id="hastaf">
+          <!-- <input type="text" autocomplete="off" placeholder="Hasta" class="fecha_mes form-control form-control-sm"  name="hastaf" id="hastaf"> -->
       </div>
     </div>
     </div>
 
-    <div class="col-lg-4">
+    <div class="col-lg-5">
        <div class="form-group">
         <input type="text" placeholder="Ingrese su busqueda..." id="buscador_vm" class="buscador_vm form-control form-control-sm">
        </div>
@@ -290,6 +304,7 @@
     <table id="tabla_vm" class="table table-hover table-bordered dt-responsive nowrap" style="width:100%">
       <thead>
         <tr>
+          <th>Ejecutor</th>
           <th>D&iacute;a</th>
           <th>Fecha</th>
           <th>ID CPP</th>  
@@ -301,13 +316,13 @@
           <th>Comentario</th>  
           <th>Estado</th>  
           <th>Fecha Inicio</th>  
-          <th>Hora Inicio</th>  
-          <th>Fecha T&eacute;rmino</th>  
-          <th>Hora T&eacute;rmino</th>  
+          <th>Hr. Inicio</th>  
+          <th>Fecha fin.</th>  
+          <th>Hr. fin.</th>  
           <th>Fecha Aprobaci&oacute;n</th>  
-          <th>Hora Digitaci&oacute;n</th>  
+          <th>Hr. Digitaci&oacute;n</th>  
           <th>Fecha Digitaci&oacute;n</th>  
-          <th>U&acute;ltima actualizaci&oacute;n</th>  
+          <th>&Uacute;ltima actualizaci&oacute;n</th>  
         </tr>
       </thead>
 

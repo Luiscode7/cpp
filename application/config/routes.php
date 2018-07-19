@@ -24,10 +24,15 @@ $route[''] = "inicio/index";
 	$route['excelTareas/(:any)/(:any)'] = "back_end/cpp/excelTareas/$1/$2";
 	$route['getUsuariosSel2CPP'] = "back_end/cpp/getUsuariosSel2CPP";
 
+
 /****** VISTA MENSUAL*******/
 	$route['getVistaMensualView'] = "back_end/cpp/getVistaMensualView";
 	$route['listaMes'] = "back_end/cpp/listaMes";
 	$route['excelMensual/(:any)/(:any)/(:any)'] = "back_end/cpp/excelMensual/$1/$2/$3";
+
+
+/****** GRAFICOS *******/
+	$route['getVistaGraficos'] = "back_end/cpp/getVistaGraficos";
 
 
 /****** MANTENEDOR ACTIVIDADES ******/
@@ -50,6 +55,7 @@ $route[''] = "inicio/index";
 	$route['getDataMantUs'] = "back_end/cpp/getDataMantUs";
 	$route['eliminaUsuario'] = "back_end/cpp/eliminaUsuario";
 	$route['excelusuarios'] = "back_end/cpp/excelusuarios";
+
 
 
 /* End of file routes.php */

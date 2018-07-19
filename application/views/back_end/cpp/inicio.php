@@ -37,28 +37,32 @@
         if(perfil==1){
           $("#menu_usuarios").show();
           $("#menu_mantenedor_actividades").show();
-          
+          $("#menu_graficos").show();
         }else{
           $("#menu_usuarios").hide();
           $("#menu_mantenedor_actividades").hide();
+          $("#menu_graficos").hide();
         }
       }
 
       inicio(perfil);
+
       $(".nav-tabs-int").addClass('disabled');
       $("#menu_detalle_diario a").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Detalle de actividades diarias');
       $(".contenedor_produccion").html("<center><img src='<?php echo base_url()?>assets/imagenes/loader2.gif' class='loader'></center>");
-
+      
       $("#menu_detalle_diario").addClass('menuActivo');    
       $("#menu_vista_mensual").removeClass('menuActivo');  
+      $("#menu_graficos").removeClass('menuActivo');  
       $("#menu_mantenedor_actividades").removeClass('menuActivo');  
       $("#menu_usuarios").removeClass('menuActivo');  
-
+      
       $.get("getCPPView", function( data ) {
         $(".contenedor_produccion").html(data);    
         $(".nav-tabs-int").removeClass('disabled');
         $("#menu_detalle_diario a").html('<i class="fa fa-list-ul"></i> Detalle de actividades diarias');
       });
+
 
        
       $(document).off('click', '#menu_detalle_diario').on('click', '#menu_detalle_diario',function(event) {
@@ -69,6 +73,7 @@
         
         $("#menu_detalle_diario").addClass('menuActivo');    
         $("#menu_vista_mensual").removeClass('menuActivo');  
+        $("#menu_graficos").removeClass('menuActivo');  
         $("#menu_mantenedor_actividades").removeClass('menuActivo');  
         $("#menu_usuarios").removeClass('menuActivo');  
         
@@ -88,6 +93,7 @@
 
         $("#menu_detalle_diario").removeClass('menuActivo');    
         $("#menu_vista_mensual").addClass('menuActivo');  
+        $("#menu_graficos").removeClass('menuActivo');  
         $("#menu_mantenedor_actividades").removeClass('menuActivo');  
         $("#menu_usuarios").removeClass('menuActivo');  
         
@@ -99,6 +105,28 @@
 
        });
 
+      $(document).off('click', '#menu_graficos').on('click', '#menu_graficos',function(event) {
+        event.preventDefault();
+        $(".nav-tabs-int").addClass('disabled');
+        $("#menu_graficos a").html('<i class="fa fa-cog fa-spin fa-1x fa-fw"></i><span class="sr-only"></span> Graficos');
+        $(".contenedor_produccion").html("<center><img src='<?php echo base_url()?>assets/imagenes/loader2.gif' class='loader'></center>");
+
+        $("#menu_detalle_diario").removeClass('menuActivo');    
+        $("#menu_vista_mensual").removeClass('menuActivo');  
+        $("#menu_graficos").addClass('menuActivo');  
+        $("#menu_mantenedor_actividades").removeClass('menuActivo');  
+        $("#menu_usuarios").removeClass('menuActivo');  
+        
+        $.get("getVistaGraficos", function( data ) {
+          $(".contenedor_produccion").html(data);    
+          $(".nav-tabs-int").removeClass('disabled');
+          $("#menu_graficos a").html('<i class="fa fa-chart-bar"></i> Graficos');
+        });
+
+       });
+
+      
+
       $(document).off('click', '#menu_mantenedor_actividades').on('click', '#menu_mantenedor_actividades',function(event) {
         event.preventDefault();
         $(".nav-tabs-int").addClass('disabled');
@@ -107,6 +135,7 @@
         
         $("#menu_detalle_diario").removeClass('menuActivo');    
         $("#menu_vista_mensual").removeClass('menuActivo');  
+        $("#menu_graficos").removeClass('menuActivo');  
         $("#menu_mantenedor_actividades").addClass('menuActivo');  
         $("#menu_usuarios").removeClass('menuActivo');  
         
@@ -126,6 +155,7 @@
         
         $("#menu_detalle_diario").removeClass('menuActivo');    
         $("#menu_vista_mensual").removeClass('menuActivo');  
+        $("#menu_graficos").removeClass('menuActivo');  
         $("#menu_mantenedor_actividades").removeClass('menuActivo');  
         $("#menu_usuarios").addClass('menuActivo');  
         
@@ -146,7 +176,8 @@
     <div class="col-12"> 
        <ul class="nav nav-tabs navbar-left nav-tabs-int">
         <li id="menu_detalle_diario" class="active"><a><i class="fa fa-list-ul"></i> Detalle de actividades diarias</a></li>   
-         <li id="menu_vista_mensual" class="active"><a><i class="fa fa-calendar"></i> Vista mensual</a></li>   
+        <li id="menu_vista_mensual" class="active"><a><i class="fa fa-calendar"></i> Vista mensual</a></li>   
+        <li id="menu_graficos" class="active"><a><i class="fa fa-chart-bar"></i> Graficos</a></li>   
         <li id="menu_mantenedor_actividades" class="active"><a><i class="fa fa-th-list"></i> Mantenedor actividades</a></li>    
         <li id="menu_usuarios" class="active"><a><i class="fa fa-user"></i> Mantenedor Usuarios</a></li>   
       </ul>  
