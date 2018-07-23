@@ -11,7 +11,7 @@
 <script src="<?php echo base_url();?>assets/back_end/js/bootstrap.min.js"></script>
 <link href="<?php echo base_url();?>assets/back_end/css/normalize.min.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/back_end/css/bootstrap.min.css" rel="stylesheet">
-<link href="<?php echo base_url();?>assets/back_end/css/estilos.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/estilos_km.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/back_end/css/fontawesome-all.min.css" rel="stylesheet">
 <link href="<?php echo base_url();?>assets/back_end/css/form_style.css" rel="stylesheet">
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -24,6 +24,7 @@
   body{
   background-image: url("./assets/imagenes/fondolog.jpg");
   background-size: cover;
+  overflow-y:hidden;
   }
 
   .validacion{
@@ -50,10 +51,10 @@
     margin-bottom: 10px;
   }
 
-*{
-  margin:0;
-  padding:0;
-}
+  .modal-padding{
+    width:60%;
+    padding:30px 30px 14px 30px;
+  }
 
 </style>
 <script type="text/javascript">
@@ -129,39 +130,56 @@
         }
       });
 
-      $('#recuperarpass').submit(function(){
-        $('#modal1').modal("toggle"); 
+      $(document).on('submit', '#recuperarpass', function(event) {
+       if(detectBrowser()){
         var formElement = document.querySelector("#recuperarpass");
         var formData = new FormData(formElement);
+        data: formData;
+
         $.ajax({
-          url: $('.recuperarpass').attr('action')+"?"+$.now(),  
-          type: 'POST',
-          data: formData,
-          cache: false,
-          processData: false,
-          dataType: "json",
-          contentType : false,
-          success: function (data) {
-       
-          if(data.res == 1){    
-              $(".validacion-rut").hide();       
-              $(".validacion-rut").html("<div class='row'><div class='card-panel white-text teal lighten-2'><center>Nueva contrase&ntilde;a enviada a su correo.</center></div></div>");
-              $(".validacion-rut").fadeIn(1000);
-                //setTimeout(function(){window.location='<?php echo base_url()?>inicio'} , 4000); 
-          }else if(data.res == 2){
-              $(".validacion-rut").hide();
-              $(".validacion-rut").html("<div class='row'><div class='card-panel white-text red darken-3'><center><blockquote>El rut ingresado no esta registrado en la base de datos.</blockquote></center></div></div>");
-              $(".validacion-rut").fadeIn(1000);
-          }else if(data.res == 3){
-              $(".validacion-rut").hide();
-              $(".validacion-rut").html("<div class='row'><div class='card-panel white-text red darken-3'><center><blockquote>Error, Intente nuevamente.</blockquote></center></div></div>");
-              $(".validacion-rut").fadeIn(1000);
-          }
+            url: $('#recuperarpass').attr('action')+"?"+$.now(),
+            type: 'POST',
+            data: formData,
+            cache: false,
+            processData: false,
+            dataType: "json",
+            contentType : false,
+            beforeSend: function(){
+            	$('.btn_ingresalogin_cpp').prop("disabled",true);
+            },
+            success:function(data){
+              if(data.res == "ok"){    
+                $(".validacion").hide();       
+                $(".validacion").html('<div class="alert alert-primary alert-dismissible fade show" role="alert"><strong>'+data.msg+'</strong></div>');
+                //$(".btn_submit").html('<button type="submit" class="btn_ingresalogin_cpp btn btn-primary"> Enviando <i class="fa fa-cog fa-spin"></i></button>');
+                $(".validacion").fadeIn(1);
+                //$("#btn_submit").html('<i class="fa fa-cog fa-spin fa-3x"></i>');  
+                $('.btn_ingresalogin_cpp').prop("disabled",true);
+                /*setTimeout( function () {
+		         window.location.replace("<?php echo base_url(); ?>inicio");
+		        }, 1500);*/
+              }else if(data.res == "error"){
+              	$('.btn_ingresalogin_cpp').prop("disabled",false);
+                $(".validacion").hide();
+                $(".validacion").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+data.msg+'</div>');
+                $(".validacion").fadeIn(1000);
+              }
+
+            },
+            error:function(data){
+            	$('.btn_ingresalogin_cpp').prop("disabled",false);
+                $(".validacion").hide();
+                $(".validacion").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">Problemas accediendo a la base de datos, intente nuevamente.</div>');
+                $(".validacion").fadeIn(1000);          
+            }
+        });
+        return false;
+        }else{
+            return false;
         }
-       
-    });
-      return false;     
-});
+      });
+
+
 
 $(".usuario").keyup(function(event) {
     $(".rut").attr("value",$(this).val());
@@ -213,7 +231,7 @@ $(".usuario").keyup(function(event) {
                     </div>
                     <center>
                       <div class="input-field col s10 offset-s1">
-                        <a href="#modal1" id="recupera_pass" style="font-size:12px;" data-toggle="modal" data-target="#modal1" class="modal-trigger">
+                        <a href="#modal1" id="recupera_pass" style="font-size:12px;" data-toggle="modal" data-target="#modal1">
                           ¿ Olvid&oacute; su contrase&ntilde;a ?
                         </a>  
                       </div>
@@ -227,39 +245,36 @@ $(".usuario").keyup(function(event) {
 
   <div class="container">
     <div id="modal1"  class="modal fade" data-backdrop="false" aria-labelledby="myModalLabel" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-          <?php echo form_open('recuperarpass', array('id'=>'recuperarpass','class'=>'recuperarpass')); ?>
+        <div class="modal-dialog modal-dialog-centered row justify-content-center">
+          <div class="modal-content modal-padding">
+          <?php echo form_open(base_url()."recuperarpass", array('id'=>'recuperarpass','class'=>'recuperarpass')); ?>
            
-               <button type="button" title="Cerrar Ventana" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-               <fieldset class="form-ing-cont">
-                <legend class="form-ing-border">Recuperaci&oacute;n de Contrase&ntilde;a</legend>
+               <h3>Recuperaci&oacute;n de Contrase&ntilde;a</h3>
                      
                     <div class="form-row">
                       <div class="col-lg-12">  
                         <div class="form-group">
                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm"></label>
-                            <input type="text" autocomplete="off" placeholder="" class="form-control form-control-sm"  name="rut" id="rut">
+                            <input type="email" autocomplete="off" placeholder="" class="form-control"  name="correo" id="correo">
                         </div>
                       </div>  
                     </div>
-                   
-                </fieldset>
 
                 <br>
+
               <div class="row justify-content-center">
                 <div class="col-lg-6">
                   <div class="form-row">
                     <div class="col-lg-6">
                       <div class="form-group">
-                        <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresa_cpp">
-                        <i class="fas fa-chevron-circle-right"></i> Enviar
+                        <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresalogin_cpp" style="background-color: #1E748D">
+                          <i class="fas fa-chevron-circle-right"></i> Enviar
                         </button>
                       </div>
                   </div>
 
                     <div class="col-lg-6">
-                      <button class="btn-block btn btn-sm btn-dark cierra_mod_inf" data-dismiss="modal" aria-hidden="true">
+                      <button class="btn-block btn btn-sm btn-dark cierra_mod_inf" style="background-color: #1E748D" data-dismiss="modal" aria-hidden="true">
                        <i class="fa fa-window-close"></i> Cerrar
                       </button>
                     </div>
@@ -275,5 +290,5 @@ $(".usuario").keyup(function(event) {
     </div>
 
 
-</body>
 </html>
+</body>

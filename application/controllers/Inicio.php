@@ -78,34 +78,76 @@ class Inicio extends CI_Controller {
 		redirect("");
 	}
 
-	public function recuperarpass(){
-		$rut=$this->security->xss_clean(strip_tags($this->input->post("rut")));
-		if($this->Iniciomodel->getCorreo($rut)){
-		$min=1000; $max=9999;
-   
-			$correo=$this->Iniciomodel->getCorreo($rut);
-			$pass=rand($min,$max);
-			$data=array("contrasena"=>sha1($pass));
-				if($this->Iniciomodel->recuperarpass($rut,$data)){
-					$this->load->library('email');
+	public function resetpass(){
+		if($this->input->is_ajax_request()){
+			$email=$this->security->xss_clean(strip_tags($this->input->post("correo")));
 
-					$this->email->from('no-reply@km-telecomunicaciones.cl', 'km-telecomunicaciones');
-					$this->email->to($correo);
-					//$this->email->cc('ricardo.hernandez.esp@gmail.com');
-					$this->email->subject('Contraseña solicitada Web KM');
-					$this->email->message("Nueva contraseña : ".$pass);
-					$this->email->send();
-					echo json_encode(array("res" => 1));//ok
-					exit;
-
+			if($this->form_validation->run('resetpass') == FALSE){
+				echo json_encode(array('res'=>"error", 'msg' => strip_tags(validation_errors())));exit;
+			}else{
+				
+				$result=$this->Iniciomodel->getCorreo($email);
+				if($result){
+					$this->recuperarpass($correo, $result);
+					$this->load->view('back_end/resetpass', array('correo' => $email));
 				}else{
-					echo json_encode(array("res" => 3));// problemas actualizando contrasena
-					exit;
+					$this->load->view('back_end/resetpass', array('error' => "El Email no está registrado."));
 				}
+			}
 		}else{
-			echo json_encode(array("res" => 2));// correo no encontrado
-			exit;
+			$this->load->view('back_end/resetpass');
+		}  
+		
+	}
+
+
+	public function recuperarpass(){
+
+					$this->load->library('email');
+					$desdecorreo="luiseduardo.venegas7@gmail.com";
+					$desdenombre="Luis Eduardo Venegas";
+					$asunto="Recuperar contraseña de KM";
+					$msg="Ud a solicitado recuperar la contraseña de su correo KM";
+					$config = array(
+					'protocol' => 'smtp',
+					'smtp_port' => 578,
+					'smtp_host' => "localhost",
+  					'charset'  => 'utf-8',
+  					'priority' => '1',
+					'wordwrap' => TRUE
+					);
+
+					$this->email->initialize($config);
+
+					$this->email->from($desdecorreo, $desdenombre);
+					$this->email->to("luiseduardo.venegas7@gmail.com");
+					//$this->email->bcc("copiaoculta");
+					$this->email->subject($asunto);
+					$this->email->message($msg);
+					//$this->email->attach($archivo);
+					$res=$this->email->send();
+					/*echo json_encode(array("res" => 1));
+					exit;*/
+
+	}
+
+	function generarPass($length=5,$uc=FALSE,$n=FALSE,$sc=FALSE){
+		$source = 'abcdefghijklmnopqrstuvwxyz';
+		$source = '1234567890';
+		if($uc==1) $source .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if($n==1) $source .= '1234567890';
+		if($sc==1) $source .= '|@#~$%()=^*+[]{}-_';
+		if($length>0){
+			$rstr = "";
+			$source = str_split($source,1);
+			for($i=1; $i<=$length; $i++){
+				mt_srand((double)microtime() * 1000000);
+				$num = mt_rand(1,count($source));
+				$rstr .= $source[$num-1];
+			}
+
 		}
+	return $rstr;
 	}
 
 

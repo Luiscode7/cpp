@@ -101,7 +101,16 @@ class InicioModel extends CI_Model {
 		}
 	}
 
-	public function recuperarpass($rut,$data){
+	public function getUserPass($rut){
+		$this->db->select("contrasena");
+		$this->db->where("rut",$rut);
+		$this->db->where("estado","Activo");
+		$res=$this->db->get("usuario");
+		return $res->row_array();
+	}
+
+
+	public function updatePass($rut,$data){
 		$this->db->where('rut', $rut);
 	    if($this->db->update('usuario', $data)){
 	    	return TRUE;
@@ -110,15 +119,36 @@ class InicioModel extends CI_Model {
 	    }
 	}
 
-	public function getCorreo($r){
+
+	public function recuperarpass($email,$data){
+		$this->db->where('correo', $email);
+	    if($this->db->update('usuario', $data)){
+	    	return TRUE;
+	    }else{
+	    	return FALSE;
+	    }
+	}
+
+	public function getCorreo($email){
 		$this->db->select("correo");
-		$this->db->where("rut",$r);
+		$this->db->where("correo",$email);
 		$this->db->where("estado","Activo");
 		$res=$this->db->get("usuario");
 		foreach($res->result_array() as $row){
 			return $row["correo"];
 		}
 	}
+
+	public function getRut($r){
+		$this->db->select("rut");
+		$this->db->where("rut",$r);
+		$this->db->where("estado","Activo");
+		$res=$this->db->get("usuario");
+		foreach($res->result_array() as $row){
+			return $row["rut"];
+		}
+	}
+
 
 
 }

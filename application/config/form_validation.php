@@ -99,6 +99,16 @@ $config = array(
                         'rules'   => 'required|greater_than[0]|less_than[101]'
                        )
                   
+                  ),
+            
+            'resetpass' => array(
+
+                  array(
+                        'field' => 'correo',
+                        'label' => 'correo',
+                        'rules' => 'trim|required|valid_email'
+                  )
+
             )
 
  );
