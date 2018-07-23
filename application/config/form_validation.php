@@ -101,7 +101,7 @@ $config = array(
                   
                   ),
             
-            'resetpass' => array(
+            'resetPass' => array(
 
                   array(
                         'field' => 'correo',

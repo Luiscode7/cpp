@@ -7,8 +7,8 @@ $route['inicio'] = "inicio/index";
 $route['login'] = "inicio/login";
 $route['unlogin'] = "inicio/unlogin";
 $route['loginProcess'] = "inicio/loginProcess";
-$route['recuperarpass'] = "inicio/recuperarpass";
-$route['resetpass'] = "inicio/resetpass";
+$route['enviarCorreo'] = "inicio/enviarCorreo";
+$route['resetPass'] = "inicio/resetPass";
 $route['resetpassproc'] = "inicio/resetpassproc";
 
 $route[''] = "inicio/index";

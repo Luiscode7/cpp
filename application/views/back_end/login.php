@@ -130,14 +130,14 @@
         }
       });
 
-      $(document).on('submit', '#recuperarpass', function(event) {
+      $(document).on('submit', '#resetPass', function(event) {
        if(detectBrowser()){
-        var formElement = document.querySelector("#recuperarpass");
+        var formElement = document.querySelector("#resetPass");
         var formData = new FormData(formElement);
         data: formData;
 
         $.ajax({
-            url: $('#recuperarpass').attr('action')+"?"+$.now(),
+            url: $('#resetPass').attr('action')+"?"+$.now(),
             type: 'POST',
             data: formData,
             cache: false,
@@ -149,28 +149,28 @@
             },
             success:function(data){
               if(data.res == "ok"){    
-                $(".validacion").hide();       
-                $(".validacion").html('<div class="alert alert-primary alert-dismissible fade show" role="alert"><strong>'+data.msg+'</strong></div>');
-                //$(".btn_submit").html('<button type="submit" class="btn_ingresalogin_cpp btn btn-primary"> Enviando <i class="fa fa-cog fa-spin"></i></button>');
-                $(".validacion").fadeIn(1);
-                //$("#btn_submit").html('<i class="fa fa-cog fa-spin fa-3x"></i>');  
+                $(".validacion-correo").hide();       
+                $(".validacion-correo").html('<div class="alert alert-primary alert-dismissible fade show" role="alert"><strong>'+data.msg+'</strong></div>');
+                $(".btn_submit2").html('<button type="submit" class="btn_ingresalogin_cpp btn btn-primary"> Enviando <i class="fa fa-cog fa-spin"></i></button>');
+                $(".validacion-correo").fadeIn(1);
+                $("#btn_submit2").html('<i class="fa fa-cog fa-spin fa-3x"></i>');  
                 $('.btn_ingresalogin_cpp').prop("disabled",true);
                 /*setTimeout( function () {
 		         window.location.replace("<?php echo base_url(); ?>inicio");
 		        }, 1500);*/
               }else if(data.res == "error"){
               	$('.btn_ingresalogin_cpp').prop("disabled",false);
-                $(".validacion").hide();
-                $(".validacion").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+data.msg+'</div>');
-                $(".validacion").fadeIn(1000);
+                $(".validacion-correo").hide();
+                $(".validacion-correo").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+data.msg+'</div>');
+                $(".validacion-correo").fadeIn(1000);
               }
 
             },
             error:function(data){
             	$('.btn_ingresalogin_cpp').prop("disabled",false);
-                $(".validacion").hide();
-                $(".validacion").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">Problemas accediendo a la base de datos, intente nuevamente.</div>');
-                $(".validacion").fadeIn(1000);          
+                $(".validacion-correo").hide();
+                $(".validacion-correo").html('<div class="alert alert-danger alert-dismissible fade show" role="alert">Problemas accediendo a la base de datos, intente nuevamente.</div>');
+                $(".validacion-correo").fadeIn(1000);          
             }
         });
         return false;
@@ -247,9 +247,11 @@ $(".usuario").keyup(function(event) {
     <div id="modal1"  class="modal fade" data-backdrop="false" aria-labelledby="myModalLabel" role="dialog">
         <div class="modal-dialog modal-dialog-centered row justify-content-center">
           <div class="modal-content modal-padding">
-          <?php echo form_open(base_url()."recuperarpass", array('id'=>'recuperarpass','class'=>'recuperarpass')); ?>
+          <?php echo form_open(base_url()."resetPass", array('id'=>'resetPass','class'=>'resetPass')); ?>
            
                <h3>Recuperaci&oacute;n de Contrase&ntilde;a</h3>
+
+               <div class="validacion-correo"></div>
                      
                     <div class="form-row">
                       <div class="col-lg-12">  
@@ -267,9 +269,11 @@ $(".usuario").keyup(function(event) {
                   <div class="form-row">
                     <div class="col-lg-6">
                       <div class="form-group">
+                      <div class="btn_submit2">
                         <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresalogin_cpp" style="background-color: #1E748D">
                           <i class="fas fa-chevron-circle-right"></i> Enviar
                         </button>
+                      </div>
                       </div>
                   </div>
 

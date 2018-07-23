@@ -130,12 +130,12 @@ class InicioModel extends CI_Model {
 	}
 
 	public function getCorreo($email){
-		$this->db->select("correo");
+		$this->db->select("correo, primer_nombre, apellido_paterno");
 		$this->db->where("correo",$email);
 		$this->db->where("estado","Activo");
 		$res=$this->db->get("usuario");
 		foreach($res->result_array() as $row){
-			return $row["correo"];
+			return $row["primer_nombre"] . " " . $row["apellido_paterno"];
 		}
 	}
 

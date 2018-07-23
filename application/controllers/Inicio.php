@@ -78,17 +78,15 @@ class Inicio extends CI_Controller {
 		redirect("");
 	}
 
-	public function resetpass(){
+	public function resetPass(){
 		if($this->input->is_ajax_request()){
-			$email=$this->security->xss_clean(strip_tags($this->input->post("correo")));
-
-			if($this->form_validation->run('resetpass') == FALSE){
+			if($this->form_validation->run('resetPass') == FALSE){
 				echo json_encode(array('res'=>"error", 'msg' => strip_tags(validation_errors())));exit;
 			}else{
-				
+				$email=$this->security->xss_clean(strip_tags($this->input->post("correo")));
 				$result=$this->Iniciomodel->getCorreo($email);
 				if($result){
-					$this->recuperarpass($correo, $result);
+					$this->enviarCorreo($email, $result);
 					$this->load->view('back_end/resetpass', array('correo' => $email));
 				}else{
 					$this->load->view('back_end/resetpass', array('error' => "El Email no está registrado."));
@@ -101,17 +99,17 @@ class Inicio extends CI_Controller {
 	}
 
 
-	public function recuperarpass(){
+	public function enviarCorreo($email,$nombre){
 
 					$this->load->library('email');
+					$this->email->set_mailtype('html');
 					$desdecorreo="luiseduardo.venegas7@gmail.com";
 					$desdenombre="Luis Eduardo Venegas";
 					$asunto="Recuperar contraseña de KM";
-					$msg="Ud a solicitado recuperar la contraseña de su correo KM";
+					$msg='<p>Estimado' . " " . $nombre . ',</p>';
+					$msg .='<p>Ud a solicitado recuperar la contraseña de su correo KM.
+						 por favor haga <strong><a href="' .base_url() . 'resetPass'.'">Click Aqui</a></strong> para cambiar su contraseña</p>';
 					$config = array(
-					'protocol' => 'smtp',
-					'smtp_port' => 578,
-					'smtp_host' => "localhost",
   					'charset'  => 'utf-8',
   					'priority' => '1',
 					'wordwrap' => TRUE
@@ -120,14 +118,14 @@ class Inicio extends CI_Controller {
 					$this->email->initialize($config);
 
 					$this->email->from($desdecorreo, $desdenombre);
-					$this->email->to("luiseduardo.venegas7@gmail.com");
+					$this->email->to($email);
 					//$this->email->bcc("copiaoculta");
 					$this->email->subject($asunto);
 					$this->email->message($msg);
 					//$this->email->attach($archivo);
 					$res=$this->email->send();
-					/*echo json_encode(array("res" => 1));
-					exit;*/
+					echo json_encode(array("res" => 1));
+					exit;
 
 	}
 
@@ -149,7 +147,5 @@ class Inicio extends CI_Controller {
 		}
 	return $rstr;
 	}
-
-
 	
 }

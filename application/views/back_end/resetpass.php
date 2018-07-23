@@ -1,4 +1,56 @@
-<script type="text/javascript">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="">
+<meta name="author" content="">
+<title><?php echo $titulo?></title>
+<script src="<?php echo base_url();?>assets/back_end/js/jquery.min.js"></script>
+<script src="<?php echo base_url();?>assets/back_end/js/bootstrap.min.js"></script>
+<link href="<?php echo base_url();?>assets/back_end/css/normalize.min.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/bootstrap.min.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/estilos_km.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/fontawesome-all.min.css" rel="stylesheet">
+<link href="<?php echo base_url();?>assets/back_end/css/form_style.css" rel="stylesheet">
+
+<style type="text/css" media="screen">
+  body{
+  background-image: url("./assets/imagenes/fondolog.jpg");
+  background-size: cover;
+  overflow-y:hidden;
+  }
+
+  .alert {
+  padding: 6px;
+  margin-bottom: 0px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align:left;
+  }
+
+  .top-content{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  }
+
+  .contenedor-pass{
+    width:40%;
+  }
+
+  .titulo-pass{
+    color:#f8f9fa;
+    padding-bottom:20px;
+  }
+
+
+</style>
+
+<!--<script type="text/javascript">
   $(function(){
 
       $(document).on('click', '.unlogin', function(event) {
@@ -68,70 +120,25 @@
         return false; 
   });
   });
-</script>
+</script>-->
 
-<section class="">
-<div class="container">
-<div class="section">
-<div class="row">
-  <div class="col s12 m12 l10 offset-l1"> 
-    <div class="changepass z-depth-2">
-       <div class="row">
-            <div class="col s12">
-              <div class="changepass_title">
-                 <h3>Cambiar Contrase&ntilde;a</h3>
-              </div>
-            </div>
-      </div>
-       <div class="row">
-          <div class="col s12 validation_changepass">
-            <div class="alert alert-success" align="center">
-            <strong>Debes rellenar los datos.</strong>
-            </div>
-          </div> 
-          <div class="col s12">
-          <div id="progress"></div>
-          </div>
-       </div>
-
-        <div class="row">
-          <?php echo form_open(base_url()."changepassproc",array("class"=>"col s12 changepass_form","id"=>"changepass_form"));?>
-          <div class="input-field col s12 l6">
-            <i class="material-icons prefix">account_circle</i>
-            <input id="" placeholder="Contrase&ntilde;a Actual" type="password" class="validate" id="pass_actual" name="pass_actual">
-            <!-- <label for="">Contrase&ntilde;a Actual</label> -->
-          </div>
-          <div class="input-field col s12 l6">
-            <i class="material-icons prefix">lock</i>
-            <input id="" placeholder="Nueva Contrase&ntilde;a" type="password" class="validate" id="pass_nueva" name="pass_nueva">
-            <!-- <label for="">Nueva Contrase&ntilde;a</label> -->
-          </div>
-          <div class="input-field col s12 l6 offset-l3">
-            <i class="material-icons prefix">lock</i>
-            <input placeholder="Repita Contrase&ntilde;a" type="password" class="validate" id="pass_nueva2" name="pass_nueva2">
-            <!-- <label for="">Repita Contrase&ntilde;a</label> -->
-          </div>
-          <div class="row">
-          <div class="input-field col s12">               
-             <center><button class="btn waves-effect waves-light" type="submit">Aceptar
-              <i class="material-icons right">send</i></button>
-              <button class="btn waves-effect waves-light unlogin" type="button">Salir
-            </button>
-          </div>
-          </div>
-          </form>
-        </div>
-  
-
-
-
-
-
-
-
-</div>  
+<div class="container top-content row justify-content-center align-items-center" style="height:400px;">
+  <div class="contenedor-pass">
+    <div><h3 class="titulo-pass">Crear Contrase&ntilde;a Nueva</h3></div>
+    <div class="form-group">
+      <input type="password" class="form-control separador" placeholder="Ingrese Contrase&ntilde;a Actual" name="passActual" id="passActual">
+    </div>
+    <div class="form-group">
+      <input type="password" class="form-control" placeholder="Ingrese Contrase&ntilde;a Nueva" name="passNueva" id="passNueva">
+    </div>
+    <div class="form-group">
+      <input type="password" class="form-control" placeholder="Repita Contrase&ntilde;a" name="passRepetir" id="passRepetir">
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn-block btn btn-sm btn-primary btn_nuevapass_cpp" style="background-color: #1E748D">Cambiar Contrase&ntilde;a</button>
+    </div>
+  </div>
 </div>
-</div><!-- FIN ROW -->
-</div><!-- FIN DIV SECTION -->
-</div><!-- FIN CONTAINER -->
-</section><br><br>
+
+</html>
+</body>
