@@ -15,13 +15,6 @@ class CPPmodel extends CI_Model {
 
 	/***********CPP**********/
 
-		/*public function saber_dia($nombredia) {
-			$dias = array('', 'Lun','Mar','Mie','Jue','Vie','Sab', 'Dom');
-			$fecha = $dias[date('N', strtotime($nombredia))];
-			return $fecha;
-		}*/
-		//(TIME_TO_SEC(TIMEDIFF(CONCAT(c.fecha_termino,' ',c.hora_termino),CONCAT(c.fecha_inicio,' ',c.hora_inicio)))/3600) as 'duracion',
-
 		public function listaCPP($desde,$hasta,$accion){
 			$this->db->select("SHA1(c.id) as 'hash_id',
 				c.id as id,
@@ -82,6 +75,7 @@ class CPPmodel extends CI_Model {
 
 			if($accion==2){//PERSONAL DE SUPERVISOR
 				$this->db->where('(u1.id_supervisor='.$this->session->userdata("idUsuarioCPP")." 
+					or u1.id_supervisor2=".$this->session->userdata("idUsuarioCPP")."
 					or us.id=".$this->session->userdata("idUsuarioCPP").")");
 			}
 
@@ -272,6 +266,7 @@ class CPPmodel extends CI_Model {
 
 			if($accion==2){//PERSONAL DE SUPERVISOR
 				$this->db->where('(cu.id_supervisor='.$this->session->userdata("idUsuarioCPP")." 
+					or cu.id_supervisor2=".$this->session->userdata("idUsuarioCPP")."
 					or u.id=".$this->session->userdata("idUsuarioCPP").")");
 			}
 
@@ -365,6 +360,7 @@ class CPPmodel extends CI_Model {
 
 			if($accion==2){//PERSONAL DE SUPERVISOR
 				$this->db->where('(u1.id_supervisor='.$this->session->userdata("idUsuarioCPP")." 
+					or u1.id_supervisor2=".$this->session->userdata("idUsuarioCPP")."
 					or us.id=".$this->session->userdata("idUsuarioCPP").")");
 			}
 
@@ -471,7 +467,6 @@ class CPPmodel extends CI_Model {
 
 	/***********MANTENEDOR USUARIOS**********/
 
-
 		public function getUsuariosSel2(){
 			$this->db->select('id,rut,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,empresa');
 			$this->db->where('estado', "Activo");
@@ -521,11 +516,13 @@ class CPPmodel extends CI_Model {
 				cu.id as id_mant,
 				u.id as id_usuario,
 				us.id as id_supervisor,
+				us2.id as id_supervisor2,
 				u.rut as rut,
 				c.cargo as cargo,
 				u.empresa as empresa,
 				CONCAT(u.primer_nombre,' ',u.apellido_paterno,' ',u.apellido_materno) as 'usuario',
 				CONCAT(us.primer_nombre,' ',us.apellido_paterno,' ',us.apellido_materno) as 'supervisor',
+				CONCAT(us2.primer_nombre,' ',us2.apellido_paterno,' ',us2.apellido_materno) as 'supervisor2',
 				up.perfil as perfil,
 				up.id as id_perfil,
 				cu.ultima_actualizacion as ultima_actualizacion
@@ -534,6 +531,7 @@ class CPPmodel extends CI_Model {
 			$this->db->join('cpp_usuarios as cu', 'cu.id_usuario = u.id', 'right');
 			$this->db->join('cpp_usuarios_perfiles as up', 'up.id = cu.id_perfil', 'left');
 			$this->db->join('usuario as us', 'us.id = cu.id_supervisor', 'left');
+			$this->db->join('usuario as us2', 'us2.id = cu.id_supervisor2', 'left');
 			$this->db->join('mantenedor_cargo as c', 'u.id_cargo = c.id', 'left');
 
 			if($this->session->userdata('idUsuarioCPP')!=432 and $this->session->userdata('idUsuarioCPP')!=824){
@@ -565,10 +563,12 @@ class CPPmodel extends CI_Model {
 				cu.id as id_mant,
 				u.id as id_usuario,
 				us.id as id_supervisor,
+				us2.id as id_supervisor2,
 				u.rut as rut,
 				u.empresa as empresa,
 				CONCAT(u.primer_nombre,' ',u.apellido_paterno) as 'usuario',
 				CONCAT(us.primer_nombre,' ',us.apellido_paterno) as 'supervisor',
+				CONCAT(us2.primer_nombre,' ',us2.apellido_paterno) as 'supervisor2',
 				up.perfil as perfil,
 				up.id as id_perfil,
 				cu.ultima_actualizacion as ultima_actualizacion
@@ -576,6 +576,7 @@ class CPPmodel extends CI_Model {
 			$this->db->join('cpp_usuarios as cu', 'cu.id_usuario = u.id', 'right');
 			$this->db->join('cpp_usuarios_perfiles as up', 'up.id = cu.id_perfil', 'left');
 			$this->db->join('usuario as us', 'us.id = cu.id_supervisor', 'left');
+			$this->db->join('usuario as us2', 'us2.id = cu.id_supervisor2', 'left');
 			$this->db->where('sha1(cu.id)', $hash);
 			$res=$this->db->get('usuario as u');
 			if($res->num_rows()>0){

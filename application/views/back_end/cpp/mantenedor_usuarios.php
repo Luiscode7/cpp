@@ -17,7 +17,7 @@
 
 		var tabla_mant_us = $('#tabla_mant_us').DataTable({
 	        "iDisplayLength":50, 
-	        "aaSorting" : [[3,'asc']],
+	        "aaSorting" : [[1,'asc']],
 	        "scrollY": 420,
 	        "scrollX": true,
            info:true,
@@ -58,6 +58,7 @@
 	            { "data": "empresa" ,"class":"margen-td"},
               { "data": "perfil" ,"class":"margen-td"},
               { "data": "supervisor" ,"class":"margen-td"},
+              { "data": "supervisor2" ,"class":"margen-td"},
 	            { "data": "ultima_actualizacion" ,"class":"margen-td"}
 	         ]
         }); 
@@ -107,6 +108,7 @@
                        $("#id_mant_us").val("");
                        $("#select_perfil option[value=''").prop("selected", true);
                        $("#supervisor option[value=''").prop("selected", true);
+                       $("#supervisor2 option[value=''").prop("selected", true);
                        $('#select_usuario').val("").trigger('change');
                        $(".btn_agregar_us").html(' <i class="fa fa-plus"></i> Agregar');
                        tabla_mant_us.ajax.reload();
@@ -143,6 +145,7 @@
                       $("#id_mant_us").val(data.datos[dato].hash_id);
                       $("#select_perfil option[value='"+data.datos[dato].id_perfil+"'").prop("selected", true);
                       $("#supervisor option[value='"+data.datos[dato].id_supervisor+"'").prop("selected", true);
+                      $("#supervisor2 option[value='"+data.datos[dato].id_supervisor2+"'").prop("selected", true);
                       $('#select_usuario').val(data.datos[dato].id_usuario).trigger('change');
                   }
                   $(".btn_agregar_us").html('<i class="fa fa-edit" ></i> Modificar');
@@ -213,6 +216,7 @@
            $("#id_mant_us").val("");
            $("#select_perfil option[value=''").prop("selected", true);
            $("#supervisor option[value=''").prop("selected", true);
+           $("#supervisor2 option[value=''").prop("selected", true);
            $('#select_usuario').val("").trigger('change');
            $(".btn_agregar_us").html(' <i class="fa fa-plus"></i> Agregar');
         });
@@ -244,7 +248,7 @@
 			    </div>
 		    </div>  
 
-		    <div class="col-lg-3">  
+		    <div class="col-lg-2">  
 			    <div class="form-group">
 			     <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Perfil</label>
 			        <select id="select_perfil" name="perfil" class="custom-select custom-select-sm">
@@ -260,11 +264,27 @@
 			    </div>
 		    </div>  
 
-        <div class="col-lg-3">  
+        <div class="col-lg-2">  
           <div class="form-group">
            <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Supervisor</label>
               <select id="supervisor" name="supervisor" class="custom-select custom-select-sm">
               <option value="">Seleccione supervisor</option>
+              <?php 
+              foreach($supervisores as $s){
+                 ?>  
+                <option value="<?php echo $s["id"] ?>"><?php echo $s["nombre"] ?></option>
+                <?php
+              }
+              ?>
+              </select>
+          </div>
+        </div>  
+
+        <div class="col-lg-2">  
+          <div class="form-group">
+           <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Supervisor 2</label>
+              <select id="supervisor2" name="supervisor2" class="custom-select custom-select-sm">
+              <option value="">Seleccione supervisor 2</option>
               <?php 
               foreach($supervisores as $s){
                  ?>  
@@ -325,6 +345,7 @@
           <th>Empresa</th>
           <th>Perfil</th>
           <th>Supervisor</th>
+          <th>Supervisor2</th>
           <th>&Uacute;ltima actualizaci&oacute;n</th>
         </tr>
       </thead>

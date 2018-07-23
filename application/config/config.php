@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+
 $config['base_url'] = '';
 $config['index_page'] = '';
 $config['uri_protocol']	= 'AUTO';
@@ -29,13 +30,22 @@ $config['error_views_path'] = '';
 $config['cache_path'] = '';
 $config['cache_query_string'] = FALSE;
 
-$config['encryption_key'] = 'fh4kdkkkaoe30njgoe92rkdkkobec333';
+/*$config['encryption_key'] = 'fh4kdkkkaoe30njgoe92rkdkkobec333';
 $config['sess_driver'] = 'files';//$config['sess_driver'] = 'native';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 0;
+$config['sess_expiration'] = 20000;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300000;
+$config['sess_time_to_update'] = 300;
+$config['sess_regenerate_destroy'] = FALSE;*/
+
+$config['encryption_key'] = 'fh4kdkkkaoe30njgoe92rkdkkobec333';
+$config['sess_driver'] = 'database';
+$config['sess_cookie_name'] = 'ci_session';
+$config['sess_expiration'] = 7200;
+$config['sess_save_path'] = 'ci_sessions';
+$config['sess_match_ip'] = FALSE;
+$config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
 
 $config['cookie_prefix']	= '';
@@ -49,7 +59,7 @@ $config['global_xss_filtering'] = FALSE;
 $config['csrf_protection'] = FALSE;
 $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
-$config['csrf_expire'] = 19200;
+$config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
 $config['csrf_exclude_uris'] = array();
 
