@@ -68,8 +68,8 @@ class CPP extends CI_Controller {
 		}
 
 		public function getUsuariosSel2CPP(){
-			$id_usuario=$this->security->xss_clean(strip_tags($this->input->get_post("idUsuarioCPP")));
-		    echo $this->CPPmodel->getUsuariosSel2CPP($id_usuario);exit;
+			$accion=$this->security->xss_clean(strip_tags($this->input->get_post("accion")));
+		    echo $this->CPPmodel->getUsuariosSel2CPP($accion);exit;
 		}
 
 		public function formCPP(){
@@ -276,6 +276,7 @@ class CPP extends CI_Controller {
 		    <?php
 		}
 
+
 	/********VISTA MENSUAL*********/
 
 		public function getVistaMensualView(){
@@ -292,32 +293,33 @@ class CPP extends CI_Controller {
 
 		public function listaMes(){
 			$desde=$this->security->xss_clean(strip_tags($this->input->get_post("desde")));
-			$hasta=$this->security->xss_clean(strip_tags($this->input->get_post("hasta")));
+			$accion=$this->security->xss_clean(strip_tags($this->input->get_post("accion")));
 			if($desde!=""){$desde=$desde."-01";}else{$desde="";}	
-		    if($hasta!=""){$hasta=$hasta."-31";}else{$hasta="";}	
 		    if($this->session->userdata('id_perfil_CPP')==4){
 		    	$usuario=$this->session->userdata('idUsuarioCPP');
 		    }else{
 		  		$usuario=$this->security->xss_clean(strip_tags($this->input->get_post("usuario")));
 		    }
-			echo json_encode($this->CPPmodel->listaMes($desde,$hasta,$usuario));
+			echo json_encode($this->CPPmodel->listaMes($desde,$usuario,$accion));
 		}
 
 		public function excelMensual(){
-			$desde=$this->uri->segment(2);
-			$hasta=$this->uri->segment(3);	
-			$usuario=$this->uri->segment(4);	
-			if($desde!=""){$desde=$desde."-01";}else{$desde="";}	
-		    if($hasta!=""){$hasta=$hasta."-31";}else{$hasta="";}	
-		   
-		    if($this->session->userdata('id_perfil_CPP')==4){
-		    	$usuario=$this->session->userdata('idUsuarioCPP');
-		    }else{
-		  		$usuario=$usuario;
-		    }
-		   
-		    $nombre_us=strtolower(url_title(convert_accented_characters($this->CPPmodel->getNombrePorId($usuario)),'-',TRUE));
-	    	$nombre="reporte-tareas-".$nombre_us."-".date("d-m-Y",strtotime($desde))."-".date("d-m-Y",strtotime($hasta)).".xls";
+			$fecha=$this->uri->segment(2);
+			$usuario=$this->uri->segment(3);	
+			$accion=$this->uri->segment(4);	
+			if($fecha!=""){$fecha=$fecha."-01";}else{$fecha="";}	
+			
+			if($usuario=="-"){
+				$usuario="";
+			    $nombre="reporte-tareas-".date("m-Y",strtotime($fecha)).".xls";
+			    $titulo="Detalle de tareas ".date("m-Y",strtotime($fecha));
+	    	}else{
+	    		$usuario=$usuario;	  
+	      	    $nombre_us=strtolower(url_title(convert_accented_characters($this->CPPmodel->getNombrePorId($usuario)),'-',TRUE));
+	    		$nombre="reporte-tareas-".$nombre_us."-".date("m-Y",strtotime($fecha)).".xls";
+	   			$titulo="Detalle de tareas ".$this->CPPmodel->getNombrePorId($usuario)." ".date("m-Y",strtotime($fecha));
+	    	}
+
 			header("Content-type: application/vnd.ms-excel;  charset=utf-8");
 			header("Content-Disposition: attachment; filename=$nombre");
 			?>
@@ -325,10 +327,11 @@ class CPP extends CI_Controller {
 				.head{font-size:13px;height: 30px; background-color:#1D7189;color:#fff; font-weight:bold;padding:10px;margin:10px;vertical-align:middle;}
 				td{font-size:12px;text-align:center;   vertical-align:middle;}
 			</style>
-		    <h3>Detalle de tareas</h3>
+		    <h3><?php echo $titulo; ?></h3>
 		        <table align='center' border="1"> 
 			        <thead>
 			        <tr style="background-color:#F9F9F9">
+			          <th>Ejecutor</th>
 			          <th>D&iacute;a</th>
 			          <th>Fecha</th>
 			          <th>ID CPP</th>  
@@ -351,11 +354,12 @@ class CPP extends CI_Controller {
 			        </thead>	
 					<tbody>
 			        <?php 
-			        $detalle=$this->CPPmodel->listaMes($desde,$hasta,$usuario);
+			        $detalle=$this->CPPmodel->listaMes($fecha,$usuario,$accion);
 			        	if($detalle !=FALSE){
 			      		foreach($detalle as $det){
 			      			?>
 			      			 <tr>
+								 <td><?php echo utf8_decode($det["ejecutor"]); ?></td>
 								 <td><?php echo utf8_decode($det["dia"]); ?></td>
 								 <td><?php echo utf8_decode($det["fecha_termino"]); ?></td>
 								 <td><?php echo utf8_decode($det["id"]); ?></td>
@@ -383,6 +387,17 @@ class CPP extends CI_Controller {
 		        </table>
 		    <?php
 		}
+
+
+	/********VISTA GRAFICOS*********/	
+
+		public function getVistaGraficos(){
+			$this->visitas();
+		    $datos = array();  
+			$this->load->view('back_end/cpp/graficos',$datos);
+		}
+
+		
 
 
 	/********MANTENEDOR ACTIVIDADES*********/

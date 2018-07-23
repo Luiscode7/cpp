@@ -41,8 +41,8 @@ class CPPmodel extends CI_Model {
 				c.estado as estado,
 
 				CASE 
-		          WHEN c.estado = '0' THEN 'Pendiente supervisor'
-		          WHEN c.estado = '1' THEN 'Aprobado supervisor'
+		          WHEN c.estado = '0' THEN 'Pend. superv.'
+		          WHEN c.estado = '1' THEN 'Aprob. superv.'
 		        END AS estado_str,
 				c.comentarios as comentarios,
 				
@@ -81,7 +81,8 @@ class CPPmodel extends CI_Model {
 			//ACCION 1 = TODOS LOS REGISTROS
 
 			if($accion==2){//PERSONAL DE SUPERVISOR
-				$this->db->where('u1.id_supervisor', $this->session->userdata("idUsuarioCPP"));
+				$this->db->where('(u1.id_supervisor='.$this->session->userdata("idUsuarioCPP")." 
+					or us.id=".$this->session->userdata("idUsuarioCPP").")");
 			}
 
 			if($accion==3){//REGISTROS DEL USUARIO
@@ -259,16 +260,25 @@ class CPPmodel extends CI_Model {
 			
 		}
 
-		public function getUsuariosSel2CPP($id_usuario){
+		public function getUsuariosSel2CPP($accion){
 			$this->db->select('u.id as id,
 				u.primer_nombre as primer_nombre,
 				u.apellido_paterno as apellido_paterno,
 				u.apellido_materno as apellido_materno,
 				u.empresa as empresa');
 			$this->db->where('estado', "Activo");
-			if($id_usuario!=""){
-				$this->db->where('cu.id_usuario', $id_usuario);
+
+			//ACCION 1 = TODOS LOS REGISTROS
+
+			if($accion==2){//PERSONAL DE SUPERVISOR
+				$this->db->where('(cu.id_supervisor='.$this->session->userdata("idUsuarioCPP")." 
+					or u.id=".$this->session->userdata("idUsuarioCPP").")");
 			}
+
+			if($accion==3){//REGISTROS DEL USUARIO
+				$this->db->where('cu.id_usuario', $this->session->userdata("idUsuarioCPP"));
+			}
+
 			$this->db->order_by('u.primer_nombre', 'asc');
 			$this->db->join('usuario as u', 'u.id = cu.id_usuario', 'left');
 			$res=$this->db->get("cpp_usuarios as cu");
@@ -287,7 +297,7 @@ class CPPmodel extends CI_Model {
 
 	/***********VISTA MENSUAL**********/
 
-		public function listaMes($desde,$hasta,$usuario){
+		public function listaMes($fecha,$usuario,$accion){
 			$this->db->select("SHA1(c.id) as 'hash_id',
 				c.id as id,
 				c.id_actividad as id_actividad,
@@ -316,8 +326,8 @@ class CPPmodel extends CI_Model {
 				END AS 'dia',
 
 				CASE 
-		          WHEN c.estado = '0' THEN 'Pendiente supervisor'
-		          WHEN c.estado = '1' THEN 'Aprobado supervisor'
+		          WHEN c.estado = '0' THEN 'Pend. superv.'
+		          WHEN c.estado = '1' THEN 'Aprob. superv.'
 		        END AS estado_str,
 				c.comentarios as comentarios,
 
@@ -344,8 +354,24 @@ class CPPmodel extends CI_Model {
 			$this->db->join('usuario as us', 'us.id = u1.id_usuario', 'left');
 			$this->db->join('usuario as uss', 'uss.id = u2.id_usuario', 'left');
 			$this->db->join('usuario as usss', 'usss.id = u3.id_usuario', 'left');
-			$this->db->where("c.fecha_termino BETWEEN '".$desde."' AND '".$hasta."'");	
-			$this->db->where('u1.id_usuario', $usuario);
+			$this->db->where('MONTH(c.fecha_termino)=',date("m", strtotime($fecha)));
+			$this->db->where('YEAR(c.fecha_termino)=',date("Y", strtotime($fecha)));
+
+			if($usuario!=""){
+				$this->db->where('u1.id_usuario', $usuario);
+			}
+
+			//ACCION 1 = TODOS LOS REGISTROS
+
+			if($accion==2){//PERSONAL DE SUPERVISOR
+				$this->db->where('(u1.id_supervisor='.$this->session->userdata("idUsuarioCPP")." 
+					or us.id=".$this->session->userdata("idUsuarioCPP").")");
+			}
+
+			if($accion==3){//REGISTROS DEL USUARIO
+				$this->db->where('c.id_usuario', $this->session->userdata("idUsuarioCPP"));
+			}
+
 			$this->db->order_by('c.fecha_termino', 'desc');
 			$this->db->order_by('c.hora_termino', 'desc');
 			$res=$this->db->get();
@@ -387,14 +413,20 @@ class CPPmodel extends CI_Model {
 			return FALSE;
 		}
 
-		
-	public function listaActividad($empresa){
-		$this->db->select("SHA1(a.id) as 'hash_id', a.id as id, pe.proyecto_empresa as proyecto,
-		 pe.id as id_proyecto_empresa, a.id_proyecto_tipo as proyecto_tipo_id, pt.tipo as proyecto_tipo,
-		 a.actividad as actividad, a.unidad as unidad, a.valor as valor, a.porcentaje as porcentaje");
-		$this->db->from('cpp_actividades as a');
-		$this->db->join('cpp_proyecto_tipo as pt', 'pt.id = a.id_proyecto_tipo');
-		$this->db->join('cpp_proyecto_empresa as pe', 'pe.id = pt.id_proyecto_empresa');
+		public function listaActividad($empresa){
+			$this->db->select("SHA1(a.id) as 'hash_id',
+			 a.id as id,
+			 pe.proyecto_empresa as proyecto,
+			 pe.id as id_proyecto_empresa,
+			 pt.tipo as tipo_proyecto,
+			 a.id_proyecto_tipo as proyecto_tipo,
+			 a.actividad as actividad, 
+			 a.unidad as unidad,
+			 a.valor as valor, 
+			 a.porcentaje as porcentaje");
+			$this->db->from('cpp_actividades as a');
+			$this->db->join('cpp_proyecto_tipo as pt', 'pt.id = a.id_proyecto_tipo');
+			$this->db->join('cpp_proyecto_empresa as pe', 'pe.id = pt.id_proyecto_empresa');
 
 			if($empresa != ""){
 				$this->db->where("pe.id", $empresa);

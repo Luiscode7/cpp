@@ -58,37 +58,32 @@
       visibilidadExcel();
 
       function iniciaEjecutor(){
-        if(id_perfil_CPP==4){
-          $.getJSON('getUsuariosSel2CPP', {idUsuarioCPP:idUsuarioCPP}, 
-              function(response) {
-                  $("#select_usuario").select2({
-                     allowClear: true,
-                     placeholder: 'Seleccione usuario',
-                     data: response
-              });
-          });
-          setTimeout( function () {
-           $('#select_usuario').val(idUsuarioCPP).trigger('change'); 
-          }, 2000 );  
-       
-          }else{
 
-            $.getJSON('getUsuariosSel2CPP', {}, 
-                function(response) {
-                    $("#select_usuario").select2({
-                       allowClear: true,
-                       placeholder: 'Seleccione usuario',
-                       data: response
-                });
+        if(id_perfil_CPP==1 || id_perfil_CPP==2){//ADMIN,GERENTES
+          accion = 1;//TODO
+        }
+        if(id_perfil_CPP==3){//SUPERVISOR
+          accion = 2;//SU PERSONAL
+        }
+        if(id_perfil_CPP==4){//EJECUTOR
+          accion = 3;//SUS REGISTROS
+        }
+
+        $.getJSON('getUsuariosSel2CPP', {accion:accion}, 
+            function(response) {
+                $("#select_usuario").select2({
+                   allowClear: true,
+                   placeholder: 'Seleccione usuario',
+                   data: response
             });
-            setTimeout( function () {
-              $('#select_usuario').val(idUsuarioCPP).trigger('change'); 
-            }, 2000 );  
-          }
+        });
+
+        setTimeout( function () {
+         $('#select_usuario').val(idUsuarioCPP).trigger('change'); 
+        }, 2000 );  
+       
       }
 
-      
-     
     /*****DATATABLE*****/  
       var table_cpp = $('#tabla_cpp').DataTable({
         "iDisplayLength":50, 
@@ -436,7 +431,9 @@
                     $('#actividad').val(id_actividad).trigger('change');
 
                     },1200); 
-                    $('#select_usuario').html('').select2({data: [{id: '', text: ''}]});
+
+
+                    /*$('#select_usuario').html('').select2({data: [{id: '', text: ''}]});
                     $.getJSON('getUsuariosSel2CPP', {idUsuarioCPP:data.datos[dato].id_usuario}, 
                         function(response) {
                             $("#select_usuario").select2({
@@ -448,7 +445,31 @@
 
                     setTimeout( function () {
                       $('#select_usuario').val(data.datos[dato].id_usuario).trigger('change'); 
+                    }, 2000 );  */
+
+                    if(id_perfil_CPP==1 || id_perfil_CPP==2){//ADMIN,GERENTES
+                      accion = 1;//TODO
+                    }
+                    if(id_perfil_CPP==3){//SUPERVISOR
+                      accion = 2;//SU PERSONAL
+                    }
+                    if(id_perfil_CPP==4){//EJECUTOR
+                      accion = 3;//SUS REGISTROS
+                    }
+
+                    $.getJSON('getUsuariosSel2CPP', {accion:accion}, 
+                        function(response) {
+                            $("#select_usuario").select2({
+                               allowClear: true,
+                               placeholder: 'Seleccione usuario',
+                               data: response
+                        });
+                    });
+                    setTimeout( function () {
+                     $('#select_usuario').val(data.datos[dato].id_usuario).trigger('change'); 
                     }, 2000 );  
+
+
 
                     $("#cantidad").val(data.datos[dato].cantidad);
                     $("#fecha_inicio").val(data.datos[dato].fecha_inicio);
@@ -703,10 +724,10 @@
           <th>Estado</th>
           <th>Ejecutor</th>  
           <th>Fecha inicio</th>
-          <th>Hora inicio</th>
+          <th>Hr ini.</th>
           <th>Fecha fin.</th>
-          <th>Hora fin.</th>
-          <th>Duraci&oacute;n (horas)</th>
+          <th>Hr fin.</th>
+          <th>Duraci&oacute;n</th>
           <th>Proyecto Empresa</th>  
           <th>Proyecto Tipo</th>  
           <th>Actividad</th>  
@@ -716,7 +737,7 @@
           <th>Cantidad</th>
           <th>Supervisor</th> 
           <th>Fecha Aprob</th>   
-          <th>Hora Aprob</th>   
+          <th>Hr Aprob</th>   
           <th>Digitador</th>
           <th>Fecha digitaci&oacute;n</th>
           <th>Observaciones</th>    
@@ -805,7 +826,7 @@
                       <div class="col-lg-2">  
                         <div class="form-group">
                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm">Cantidad</label>
-                            <input type="text" maxlength="3" autocomplete="off" placeholder="" class="inttext form-control form-control-sm"  name="cantidad" id="cantidad">
+                            <input type="text" maxlength="5" autocomplete="off" placeholder="" class="inttext form-control form-control-sm"  name="cantidad" id="cantidad">
                         </div>
                       </div>  
 

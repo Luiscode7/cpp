@@ -1,7 +1,7 @@
 <?php
-iconv_set_encoding('internal_encoding', 'UTF-8');
+/*iconv_set_encoding('internal_encoding', 'UTF-8');
 iconv_set_encoding('input_encoding', 'UTF-8');
-iconv_set_encoding('output_encoding', 'UTF-8');
+iconv_set_encoding('output_encoding', 'UTF-8');*/
 ini_set('date.timezone', 'Chile/Continental');
 ini_set('mbstring.substitute_character', "none"); 
  //extension=php_mbstring.dll

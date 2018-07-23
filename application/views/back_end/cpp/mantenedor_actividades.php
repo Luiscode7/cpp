@@ -73,7 +73,7 @@
           },
           
           { "data": "proyecto" ,"class":"margen-td "},
-          { "data": "proyecto_tipo" ,"class":"margen-td "},
+          { "data": "tipo_proyecto" ,"class":"margen-td "},
           { "data": "actividad" ,"class":"margen-td "},
           { "data": "unidad" ,"class":"margen-td "},
           { "data": "valor" ,"class":"margen-td "},    
