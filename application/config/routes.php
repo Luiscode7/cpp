@@ -5,6 +5,9 @@ $route['404_override'] = "";
 $route['nojs'] = "inicio/nojs";
 $route['inicio'] = "inicio/index";
 $route['login'] = "inicio/login";
+$route['formRecuperarPass'] = "inicio/formRecuperarPass";
+$route['actualizarPassForm'] = "inicio/actualizarPassForm";
+
 $route['unlogin'] = "inicio/unlogin";
 $route['loginProcess'] = "inicio/loginProcess";
 $route['enviarCorreo'] = "inicio/enviarCorreo";

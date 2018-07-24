@@ -81,7 +81,8 @@
           </a>
 
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-versions">
-            <a href="unlogin" class="dropdown-item" href="#">Cerrar Sesi&oacute;n</a>
+            <a style="margin-top: 1px!important;" href="#actualizarPassModal" data-toggle="modal" class="dropdown-item" id="btn_actualizar_datos"><span class="fa fa-edit"></span> Cambiar contrase&ntilde;a</a>
+            <a style="margin-top: 1px!important;" href="unlogin" class="dropdown-item" href="#"><span class="fas fa-power-off"></span> Cerrar Sesi&oacute;n</a>
           </div>
 
         </li>

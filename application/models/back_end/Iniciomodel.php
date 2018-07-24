@@ -101,16 +101,7 @@ class InicioModel extends CI_Model {
 		}
 	}
 
-	public function getUserPass($rut){
-		$this->db->select("contrasena");
-		$this->db->where("rut",$rut);
-		$this->db->where("estado","Activo");
-		$res=$this->db->get("usuario");
-		return $res->row_array();
-	}
-
-
-	public function updatePass($email){
+	/*public function updatePass($email){
 		$this->db->where('correo', $email);
 	    if($this->db->update('usuario', $data)){
 	    	return TRUE;
@@ -128,16 +119,81 @@ class InicioModel extends CI_Model {
 		foreach($res->result_array() as $row){
 			return $row["primer_nombre"] . " " . $row["apellido_paterno"];
 		}
+	}*/
+
+	public function existeUsuario($rut){
+		$this->db->where('rut', $rut);
+		$res=$this->db->get('usuario');
+		if($res->num_rows()>0){
+			return TRUE;
+		}
+		return FALSE;
 	}
 
-	public function getRut($r){
-		$this->db->select("rut");
-		$this->db->where("rut",$r);
-		$this->db->where("estado","Activo");
-		$res=$this->db->get("usuario");
-		foreach($res->result_array() as $row){
-			return $row["rut"];
+
+	public function getCorreoPorRut($rut){
+		$this->db->select('correo');
+		$this->db->where('rut', $rut);
+		$res=$this->db->get('usuario');
+		if($res->num_rows()>0){
+			$row=$res->row_array();
+			return $row["correo"];
 		}
+		return FALSE;
+	}
+
+	public function actualizaPass($id,$data){
+		$this->db->where('id', $id);
+		if($this->db->update('usuario', $data)){
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	public function actualizaContrasena($id,$data){
+		$this->db->where('id', $id);
+		if($this->db->update('usuario', $data)){
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	public function getHashFromRut($usuario){
+		$this->db->select('sha1(id) as hash');
+		$this->db->where('rut', $usuario);
+		$res=$this->db->get('usuario');
+		if($res->num_rows()>0){
+			$row=$res->row_array();
+			return $row["hash"];
+		}
+		return FALSE;
+	}
+
+	public function getIdPorHash($hash){
+		$this->db->select('id');
+		$this->db->where('sha1(id)', $hash);
+		$res=$this->db->get('usuario');
+		if($res->num_rows()>0){
+			$row=$res->row_array();
+			return $row["id"];
+		}
+		return FALSE;
+	}
+
+
+	public function getUserData($hash){
+		$this->db->select("sha1(u.id) as id,rut,
+			CONCAT(primer_nombre,' ',apellido_paterno,' ',apellido_materno) as 'nombre',
+			correo,
+			contrasena
+	    ");
+		$this->db->from('usuario as u');
+		$this->db->where('sha1(u.id)', $hash);
+		$res=$this->db->get();
+		if($res->num_rows()>0){
+			return $res->result_array();
+		}
+		return FALSE;
 	}
 
 

@@ -397,9 +397,7 @@ class CPP extends CI_Controller {
 			$this->load->view('back_end/cpp/graficos',$datos);
 		}
 
-		
-
-
+	
 	/********MANTENEDOR ACTIVIDADES*********/
 
 		public function getMantActView(){
@@ -580,8 +578,13 @@ class CPP extends CI_Controller {
 				$usuario=$this->security->xss_clean(strip_tags($this->input->post("usuario")));
 				$perfil=$this->security->xss_clean(strip_tags($this->input->post("perfil")));
 				$supervisor=$this->security->xss_clean(strip_tags($this->input->post("supervisor")));
+				$supervisor2=$this->security->xss_clean(strip_tags($this->input->post("supervisor2")));
 				$ultima_actualizacion=date("Y-m-d G:i:s")." | ".$this->session->userdata("nombresUsuarioCPP")." ".$this->session->userdata("apellidosUsuarioCPP");
-
+				
+				if($supervisor==$supervisor2){
+					echo json_encode(array('res'=>"error", 'msg' => "Deben ser dos supervisores distintos."));exit;	
+				}
+				
 				if ($this->form_validation->run("formMantUs") == FALSE){
 					echo json_encode(array('res'=>"error", 'msg' => strip_tags(validation_errors())));exit;
 				}else{	
@@ -597,6 +600,7 @@ class CPP extends CI_Controller {
 					$data_insert=array("id_usuario"=>$usuario,
 						"id_perfil"=>$perfil,
 						"id_supervisor"=>$supervisor,
+						"id_supervisor2"=>$supervisor2,
 						"ultima_actualizacion"=>$ultima_actualizacion
 					);	
 
@@ -627,6 +631,7 @@ class CPP extends CI_Controller {
 						$data_mod=array("id_usuario"=>$usuario,
 							"id_perfil"=>$perfil,
 							"id_supervisor"=>$supervisor,
+							"id_supervisor2"=>$supervisor2,
 							"ultima_actualizacion"=>$ultima_actualizacion
 					    );	
 
@@ -684,6 +689,7 @@ class CPP extends CI_Controller {
 			          <th>Empresa</th>
 			          <th>Perfil</th>
 			          <th>Supervisor</th>
+			          <th>Supervisor2</th>
 			          <th>&Uacute;ltima actualizaci&oacute;n</th>
 			        </tr>
 			        </thead>	
@@ -700,6 +706,7 @@ class CPP extends CI_Controller {
 								 <td><?php echo utf8_decode($us["empresa"]); ?></td>
 								 <td><?php echo utf8_decode($us["perfil"]); ?></td>
 								 <td><?php echo utf8_decode($us["supervisor"]); ?></td>
+								 <td><?php echo utf8_decode($us["supervisor2"]); ?></td>
 								 <td><?php echo utf8_decode($us["ultima_actualizacion"]); ?></td>
 							
 							 </tr>

@@ -26,6 +26,10 @@
   background-size: cover;
   overflow-y:hidden;
   }
+  
+  .modal_recuperar{
+    width:60%!important;
+  }
 
   .validacion{
     font-size:12px!important;
@@ -51,9 +55,14 @@
     margin-bottom: 10px;
   }
 
-  .modal-padding{
-    width:60%;
-    padding:30px 30px 14px 30px;
+  .recuperarPass{
+    display: block;
+    text-align: center;
+    color: #1E748D;
+  }
+  .validacion_rec{
+    margin-top: 5px;
+    margin-bottom: 10px;
   }
 
 </style>
@@ -219,6 +228,59 @@ $(".usuario").keyup(function(event) {
     $(".rut").attr("value",$(this).val());
   });
 
+    $(document).on('click', '.recuperarPass', function(event) {
+      event.preventDefault();
+      $("#rut_rec").val($("#usuario").val());
+    });
+    
+
+    $(document).on('submit', '#formRecuperarPass', function(event) {
+      var formElement = document.querySelector("#formRecuperarPass");
+      var formData = new FormData(formElement);
+      data: formData;
+      $.ajax({
+          url: $('#formRecuperarPass').attr('action')+"?"+$.now(),
+          type: 'POST',
+          data: formData,
+          cache: false,
+          processData: false,
+          contentType : false,
+          dataType : "json",
+          beforeSend: function(){
+            $('.btn_submit_rec').prop("disabled",true);
+          },
+          success:function(data){
+            if(data.res == "ok"){    
+              $(".validacion_rec").hide().html('<div class="alert alert-info" style="color:#fff;font-size:12px;background-color: #1E748D;"><strong><span class="glyphicon glyphicon-ok"></span> '+data.msg+'</strong></div>').show();
+              $("#btn_submit_rec").html('<i class="fa fa-cog fa-spin fa-3x"></i>');  
+             
+              setTimeout( function () {
+                $('.btn_submit_rec').prop("disabled",false);
+                /*   $('#modal_recuperar').modal("toggle");*/
+                $("#btn_submit_rec").html('Registrarse');  
+                $('#formRecuperarPass')[0].reset();
+                /* $(".validacion_rec").html("");*/
+              }, 2000);   
+
+            }else if(data.res == "error"){
+              $('.btn_submit_rec').prop("disabled",false);
+              $(".validacion_rec").hide();
+              $(".validacion_rec").html('<div class="alert alert-info" style="color:#fff;background-color: #CD2D00;font-size: 14px;"> '+data.msg+'</div>');
+              $(".validacion_rec").fadeIn(1000);
+            }
+
+          },
+          error:function(data){
+            $('.btn_submit_rec').prop("disabled",false);
+            $(".validacion_rec").hide();
+            $(".validacion_rec").html('<div class="alert alert-info" style="color:#CD2D00;background-color: #EEEEEE;font-size: 14px;"><span class="glyphicon glyphicon-exclamation-sign"></span> Problemas accediendo a la base de datos, intente nuevamente.</div>');
+            $(".validacion_rec").fadeIn(1000);          
+          }
+      });
+      return false;
+    });
+
+
   });
 </script>
 </head>
@@ -235,10 +297,6 @@ $(".usuario").keyup(function(event) {
                     <div class="form-top-left">
                       <h3>Inicio de Sesi&oacute;n CPP</h3>
                        <div class="validacion">
-                       <!-- <div class="alert alert-info" style="background-color: #1E748D">
-                        Ingrese su rut y contrase&ntilde;a.
-                       </div> -->
-
                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
                          Ingrese su rut y contrase&ntilde;a.
                       </div>
@@ -271,62 +329,45 @@ $(".usuario").keyup(function(event) {
                       </div>
                     </center>
                    <?php echo form_close();?>
+
+                   <center><a href="#modal_recuperar" data-toggle="modal" class="recuperarPass">¿Olvido su contrase&ntilde;a?</a></center>
+                
                   </div>
 
               </div>
           </div>
     </div>
 
-  <div class="container">
-    <div id="modal1"  class="modal fade" data-backdrop="false" aria-labelledby="myModalLabel" role="dialog">
-        <div class="modal-dialog modal-dialog-centered row justify-content-center">
-          <div class="modal-content modal-padding">
-          <?php echo form_open(base_url()."recuperarpass", array('id'=>'recuperarpass','class'=>'recuperarpass')); ?>
-           
-               <h3>Recuperaci&oacute;n de Contrase&ntilde;a</h3>
+<!-- RECUPERAR MODAL -->
+  <div id="modal_recuperar" class="modal fade"  tabindex="-1"  aria-labelledby="myModalLabel" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal_recuperar">
+      <div class="modal-content">
+        <div class="modal-body" style="padding: 0px;">
 
-               <div class="validacion-correo"></div>
-                     
-                    <div class="form-row">
-                      <div class="col-lg-12">  
-                        <div class="form-group">
-                        <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm"></label>
-                            <input type="text" autocomplete="off" placeholder="" class="form-control form-control-sm"  name="correo" id="correo">
-                        </div>
-                      </div>  
-                    </div>
-
-                <br>
-
-              <div class="row justify-content-center">
-                <div class="col-lg-6">
-                  <div class="form-row">
-                    <div class="col-lg-6">
-                      <div class="form-group">
-                      <div class="btn_submit2">
-                        <button type="submit" class="btn-block btn btn-sm btn-primary btn_ingresalogin_cpp" style="background-color: #1E748D">
-                          <i class="fas fa-chevron-circle-right"></i> Enviar
-                        </button>
-                      </div>
-                      </div>
-                  </div>
-
-                    <div class="col-lg-6">
-                      <button class="btn-block btn btn-sm btn-dark cierra_mod_inf" style="background-color: #1E748D" data-dismiss="modal" aria-hidden="true">
-                       <i class="fa fa-window-close"></i> Cerrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                </div>
-
-               </div>
-             <?php echo form_close(); ?>
+        <button type="button" title="Cerrar Ventana" class="close" data-dismiss="modal" aria-hidden="true" style="position: absolute;right: 20px;top: 15px;">X</button>
+          
+          <div class="col-lg-12">
+             <h3 style="margin: 20px;">Resetear contrase&ntilde;a</h3>
           </div>
-        </div>
-      </div>
-    </div>
 
+          <div class="form-bottom">
+           <?php echo form_open_multipart("formRecuperarPass",array("id"=>"formRecuperarPass","class"=>"formRecuperarPass"))?>
+            <div class="form-group">
+              <label class="sr-only" for="form-username">Rut</label>
+                <input type="text" name="rut_rec" id="rut_rec" placeholder="Rut" class="form-control" >
+              </div>
+              
+              <div class="validacion_rec"></div>
+              <div class="btn_submit">
+                <button type="submit" class="btn_submit_rec btn btn-primary" style="background-color: #1E748D">Resetear</button>
+              </div>
+             <?php echo form_close();?>
+          </div>
+
+        </div>
+     </div>
+    </div>
+  </div>
 
 </html>
 </body>

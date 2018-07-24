@@ -20,6 +20,12 @@ class Inicio extends CI_Controller {
 		if(!$this->session->userdata("rutUserCPP")){redirect("login");}
 	}
 
+	public function checkLogin(){
+		if($this->session->userdata('idUsuarioCPP')==""){
+			echo json_encode(array('res'=>"sess"));exit;
+		}
+	}
+
 	public function index(){	
 		$this->acceso();
     	$fecha_anio_atras=date('d-m-Y', strtotime('-360 day', strtotime(date("d-m-Y"))));
@@ -47,7 +53,7 @@ class Inicio extends CI_Controller {
 			$rut2=str_replace('.', '', $rut1);
 			$usuario=str_replace('-', '', $rut2);
 
-			$pass=sha1($this->security->xss_clean(strip_tags($this->input->post("pass"))));
+			$pass=sha1(trim($this->security->xss_clean(strip_tags($this->input->post("pass")))));
 			if(empty($usuario) or empty($pass)){
 				echo json_encode(array("res" => "error",  "msg" => "Debe ingresar los datos." ,"usuario" => $pass));exit;
 			}
@@ -78,7 +84,7 @@ class Inicio extends CI_Controller {
 		redirect("");
 	}
 
-	public function resetPass(){
+	/*public function resetPass(){
 		if($this->input->is_ajax_request()){
 			if($this->form_validation->run('resetPass') == FALSE){
 				echo json_encode(array('res'=>"error", 'msg' => strip_tags(validation_errors())));exit;
@@ -127,22 +133,124 @@ class Inicio extends CI_Controller {
 					echo json_encode(array("res" => 1));
 					exit;
 
-	}
-
-	function updatePass(){
-
 	}*/
 
-	/*public function changepass(){
-		if(!$this->session->userdata("rutUserCPP")){
-			redirect("login");
+	public function formRecuperarPass(){
+
+		if($this->input->is_ajax_request()){
+			
+			$rut=$this->security->xss_clean(strip_tags($this->input->post("rut_rec")));
+			$rut1=str_replace('.', '', $rut);
+			$rut2=str_replace('.', '', $rut1);
+			$usuario=str_replace('-', '', $rut2);
+
+			if($usuario==""){echo json_encode(array("res" => "error",  "msg" => "Debe ingresar el usuario."));exit;}
+
+			if($this->Iniciomodel->existeUsuario($usuario)){
+
+				$correo=$this->Iniciomodel->getCorreoPorRut($usuario);
+				if($correo=!FALSE){
+					$this->enviaCorreoRecuperacion($usuario);	
+					echo json_encode(array("res" => "ok",  "msg" => "Nueva contraseña enviada al correo : ".$this->Iniciomodel->getCorreoPorRut($usuario)));exit;
+				}else{
+					echo json_encode(array("res" => "error",  "msg" => "Debe ingresar el usuario."));exit;
+				}
+			}else{
+				echo json_encode(array("res" => "error",  "msg" => "Debe ingresar un usuario válido."));exit;
+			}
+			
+		}else{
+			exit("No direct script access allowed");
 		}
-		$datos = array(
-        'titulo' => "Cambiar Contrase&ntilde;a",
-        'contenido' => "home/changepass",
-	    'header'=>"index"
-       	);  
-		$this->load->view('plantillas/plantilla_front_end',$datos);
+	}
+
+	public function enviaCorreoRecuperacion($usuario){
+		$this->load->library('email');
+	    $config = array (
+          'mailtype' => 'html',
+          'charset'  => 'utf-8',
+          'priority' => '1',
+          'wordwrap' => TRUE
+           );
+	    $this->email->initialize($config);
+	    $hash=$this->Iniciomodel->getHashFromRut($usuario);
+	    $prueba=FALSE;
+	    $data=$this->Iniciomodel->getUserData($hash);
+
+	    foreach($data as $key){
+
+		    if($prueba){
+				$correo = array('ricardo.hernandez.esp@gmail.com');
+			}else{
+				$correo = $key["correo"];
+			}
+
+			$pass=$this->generarPass();
+			$passsha1=sha1($pass);
+			$data_pass=array("contrasena"=>$passsha1);
+
+			$datos=array("datos"=>$data,"pass"=>$pass);
+			$html=$this->load->view('back_end/recuperar_pass',$datos,TRUE);
+			$this->email->from("reportes@km-t.cl","CPP");
+			$this->email->to($correo);	
+			$this->email->subject("Recuperación de contraseña CPP , ".$key["nombre"]."");
+			$this->email->message($html); 
+			$resp=$this->email->send();
+
+			if ($resp) {
+				$id=$this->Iniciomodel->getIdPorHash($hash);
+				$this->Iniciomodel->actualizaPass($id,$data_pass);
+				return TRUE;
+			}else{
+				return FALSE;
+			}
+		}
+
+	}
+
+	public function generarPass(){
+		$length=5;
+		$uc=FALSE;
+		$n=FALSE;
+		$sc=FALSE;
+
+		$source = 'abcdefghijklmnopqrstuvwxyz';
+		$source = '1234567890';
+		if($uc==1) $source .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if($n==1) $source .= '1234567890';
+		if($sc==1) $source .= '|@#~$%()=^*+[]{}-_';
+		if($length>0){
+			$rstr = "";
+			$source = str_split($source,1);
+			for($i=1; $i<=$length; $i++){
+				mt_srand((double)microtime() * 1000000);
+				$num = mt_rand(1,count($source));
+				$rstr .= $source[$num-1];
+			}
+
+		}
+		return $rstr;
+	}
+
+	public function actualizarPassForm(){
+		if($this->input->is_ajax_request()){
+			$this->checkLogin();
+			$id_usuario=$this->session->userdata('idUsuarioCPP');
+			$pass=$this->security->xss_clean(strip_tags($this->input->post("pass_us")));
+			if($pass==""){echo json_encode(array("res" => "error",  "msg" => "Debe ingresar la contraseña."));exit;}
+			if(strlen($pass)<4){echo json_encode(array("res" => "error",  "msg" => "La contraseña debe tener mínimo 4 caracteres."));exit;}
+
+			$data=array("contrasena" => sha1($pass));
+				
+			if($this->Iniciomodel->actualizaContrasena($id_usuario,$data)){
+				echo json_encode(array("res" => "ok",  "msg" => "Contraseña actualizada correctamente"));exit;
+			}else{
+				echo json_encode(array("res" => "error",  "msg" => "Problemas actualizando la contraseña, intente más tarde."));exit;
+			}
+			
+		}else{
+			exit("No direct script access allowed");
+		}
 	}
 
 }
