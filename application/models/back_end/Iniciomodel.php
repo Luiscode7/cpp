@@ -110,17 +110,7 @@ class InicioModel extends CI_Model {
 	}
 
 
-	public function updatePass($rut,$data){
-		$this->db->where('rut', $rut);
-	    if($this->db->update('usuario', $data)){
-	    	return TRUE;
-	    }else{
-	    	return FALSE;
-	    }
-	}
-
-
-	public function recuperarpass($email,$data){
+	public function updatePass($email){
 		$this->db->where('correo', $email);
 	    if($this->db->update('usuario', $data)){
 	    	return TRUE;
@@ -128,6 +118,7 @@ class InicioModel extends CI_Model {
 	    	return FALSE;
 	    }
 	}
+
 
 	public function getCorreo($email){
 		$this->db->select("correo, primer_nombre, apellido_paterno");
@@ -148,7 +139,6 @@ class InicioModel extends CI_Model {
 			return $row["rut"];
 		}
 	}
-
 
 
 }

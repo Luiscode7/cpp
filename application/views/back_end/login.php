@@ -130,14 +130,14 @@
         }
       });
 
-      $(document).on('submit', '#resetPass', function(event) {
+      /*$(document).on('submit', '#recuperarpass', function(event) {
        if(detectBrowser()){
-        var formElement = document.querySelector("#resetPass");
+        var formElement = document.querySelector("#recuperarpass");
         var formData = new FormData(formElement);
         data: formData;
 
         $.ajax({
-            url: $('#resetPass').attr('action')+"?"+$.now(),
+            url: $('#recuperarpass').attr('action')+"?"+$.now(),
             type: 'POST',
             data: formData,
             cache: false,
@@ -155,9 +155,9 @@
                 $(".validacion-correo").fadeIn(1);
                 $("#btn_submit2").html('<i class="fa fa-cog fa-spin fa-3x"></i>');  
                 $('.btn_ingresalogin_cpp').prop("disabled",true);
-                /*setTimeout( function () {
+                setTimeout( function () {
 		         window.location.replace("<?php echo base_url(); ?>inicio");
-		        }, 1500);*/
+		        }, 1500);
               }else if(data.res == "error"){
               	$('.btn_ingresalogin_cpp').prop("disabled",false);
                 $(".validacion-correo").hide();
@@ -177,7 +177,41 @@
         }else{
             return false;
         }
-      });
+      });*/
+
+      $('#resetPass').submit(function(){
+
+var formElement = document.querySelector("#resetPass");
+var formData = new FormData(formElement);
+    $.ajax({
+        url: $('.resetPass').attr('action')+"?"+$.now(),  
+        type: 'POST',
+        data: formData,
+        cache: false,
+        processData: false,
+        dataType: "json",
+        contentType : false,
+        success: function (data) {
+       
+        if(data.res == 1){    
+              $(".validacion-correo").hide();       
+              $(".validacion-correo").html("<div class='row'><div class='card-panel white-text teal lighten-2'><center>Nueva contrase&ntilde;a enviada a su correo.</center></div></div>");
+              $(".validacion-correo").fadeIn(1000);
+                //setTimeout(function(){window.location='<?php echo base_url()?>inicio'} , 4000); 
+            }else if(data.res == 2){
+              $(".validacion-correo").hide();
+              $(".validacion-correo").html("<div class='row'><div class='card-panel white-text red darken-3'><center><blockquote>El rut ingresado no esta registrado en la base de datos.</blockquote></center></div></div>");
+              $(".validacion-correo").fadeIn(1000);
+            }else if(data.res == 3){
+              $(".validacion-correo").hide();
+              $(".validacion-correo").html("<div class='row'><div class='card-panel white-text red darken-3'><center><blockquote>Error, Intente nuevamente.</blockquote></center></div></div>");
+              $(".validacion-correo").fadeIn(1000);
+            }
+        }
+       
+    });
+      return false;     
+});
 
 
 
@@ -247,7 +281,7 @@ $(".usuario").keyup(function(event) {
     <div id="modal1"  class="modal fade" data-backdrop="false" aria-labelledby="myModalLabel" role="dialog">
         <div class="modal-dialog modal-dialog-centered row justify-content-center">
           <div class="modal-content modal-padding">
-          <?php echo form_open(base_url()."resetPass", array('id'=>'resetPass','class'=>'resetPass')); ?>
+          <?php echo form_open(base_url()."recuperarpass", array('id'=>'recuperarpass','class'=>'recuperarpass')); ?>
            
                <h3>Recuperaci&oacute;n de Contrase&ntilde;a</h3>
 
@@ -257,7 +291,7 @@ $(".usuario").keyup(function(event) {
                       <div class="col-lg-12">  
                         <div class="form-group">
                         <label for="colFormLabelSm" class="col-sm-12 col-form-label col-form-label-sm"></label>
-                            <input type="email" autocomplete="off" placeholder="" class="form-control"  name="correo" id="correo">
+                            <input type="text" autocomplete="off" placeholder="" class="form-control form-control-sm"  name="correo" id="correo">
                         </div>
                       </div>  
                     </div>
